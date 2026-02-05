@@ -274,16 +274,16 @@
             overflow-y: hidden; 
         }
         
-        /* --- ЗАГОЛОВКИ СЕКЦИЙ В КАЛЬКУЛЯТОРЕ (ОБНОВЛЕННЫЕ) --- */
+        /* --- ЗАГОЛОВКИ СЕКЦИЙ В КАЛЬКУЛЯТОРЕ --- */
         .form-section-title {
-            color: var(--text-main); /* Сделал белым, чтобы было виднее */
-            font-size: 1.1rem;      /* Увеличил шрифт */
-            font-weight: 800;       /* Сделал жирнее */
+            color: var(--text-main); 
+            font-size: 1.1rem;      
+            font-weight: 800;       
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 25px;       /* Отступ сверху побольше */
+            margin-top: 25px;       
             margin-bottom: -5px;
-            border-bottom: 2px solid rgba(236, 72, 153, 0.5); /* Розовая линия подчеркивания */
+            border-bottom: 2px solid rgba(236, 72, 153, 0.5); 
             padding-bottom: 10px;
         }
 
@@ -296,7 +296,7 @@
         }
         
         .label-row label {
-            margin-bottom: 0; /* Убираем отступ у лейбла, так как он внутри флекса */
+            margin-bottom: 0; 
         }
 
         .sales-book-link {
@@ -444,7 +444,7 @@
                 <label>На какой курс перевод (Название)</label>
                 <select id="calc-new-course-name" required>
                     <option value="" disabled selected>Выберите курс...</option>
-                    <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
+                    <option value="manual">✍️ Ввести вручную</option> <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
                     <option value="Digital-дизайнер 2.0">Digital-дизайнер 2.0</option>
                     <option value="NEW 3.0 Графический дизайн">NEW 3.0 Графический дизайн</option>
                     <option value="NEW Профессия UX/UI-дизайнер">NEW Профессия UX/UI-дизайнер</option>
@@ -455,6 +455,7 @@
                     <option value="NEW Дизайн карточек для маркетплейсов">NEW Дизайн карточек для маркетплейсов</option>
                     <option value="Дизайн упаковки">Дизайн упаковки</option>
                 </select>
+                <input type="text" id="calc-new-course-manual" class="fade-in" style="display:none; margin-top:10px;" placeholder="Введите название курса">
             </div>
 
             <div class="input-group">
@@ -678,7 +679,10 @@
         sourceCourse: document.getElementById('calc-source-course'),
         sourceTariffCont: document.getElementById('calc-source-tariff-container'),
         sourceTariff: document.getElementById('calc-source-tariff'),
-        duration: document.getElementById('calc-duration-months')
+        duration: document.getElementById('calc-duration-months'),
+        // Элементы для выбора нового курса
+        newCourseSelect: document.getElementById('calc-new-course-name'),
+        newCourseManual: document.getElementById('calc-new-course-manual')
     };
 
     // ОБРАБОТКА ВЫБОРА ИСХОДНОГО КУРСА
@@ -723,6 +727,17 @@
         }
     });
 
+    // ОБРАБОТКА ВЫБОРА "ВВЕСТИ ВРУЧНУЮ" ДЛЯ НОВОГО КУРСА
+    elsCalc.newCourseSelect.addEventListener('change', () => {
+        if (elsCalc.newCourseSelect.value === 'manual') {
+            elsCalc.newCourseManual.style.display = 'block';
+            elsCalc.newCourseManual.required = true;
+        } else {
+            elsCalc.newCourseManual.style.display = 'none';
+            elsCalc.newCourseManual.required = false;
+        }
+    });
+
     // РАСЧЕТ
     document.getElementById('calculator-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -731,7 +746,12 @@
         const durationMonths = parseFloat(document.getElementById('calc-duration-months').value) || 12;
         const startDateStr = document.getElementById('calc-start-date').value;
         const requestDateStr = document.getElementById('calc-request-date').value;
-        const newCourseName = document.getElementById('calc-new-course-name').value;
+        
+        // Получаем имя курса (из списка или вручную)
+        const selectVal = document.getElementById('calc-new-course-name').value;
+        const manualVal = document.getElementById('calc-new-course-manual').value;
+        const newCourseName = (selectVal === 'manual') ? manualVal : selectVal;
+
         const newCost = parseFloat(document.getElementById('calc-new-cost').value) || 0;
         const discountPercent = parseFloat(document.getElementById('calc-discount').value) || 0;
 
@@ -775,9 +795,9 @@
         const oneTimePayment = Math.round(toPayBase - discountAmount);
 
         const fmt = (num) => Math.round(num).toLocaleString('ru-RU');
-        const dateStream = new Date().toLocaleDateString('ru-RU');
-
-        const text = `Стоимость перевода на курс ${newCourseName} // Поток ${dateStream} составит р.${fmt(toPayBase)}
+        
+        // УБРАЛ " // Поток..." из вывода
+        const text = `Стоимость перевода на курс ${newCourseName} составит р.${fmt(toPayBase)}
 Возможна беспроцентная рассрочка в банке: 
 на 6 месяцев — ${getInstallment(6)} р./мес.
 на 12 месяцев — ${getInstallment(12)} р./мес.
