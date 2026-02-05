@@ -40,7 +40,7 @@
 
         .container {
             width: 100%;
-            max-width: 900px; /* Ширина для Калькулятора (по умолчанию) */
+            max-width: 800px; /* БАЗОВАЯ ШИРИНА (как в оригинале) */
             background: var(--bg-card);
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -49,13 +49,13 @@
             position: relative;
             overflow: hidden;
             
-            /* АНИМАЦИЯ ИЗМЕНЕНИЯ ШИРИНЫ */
-            transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* Плавное изменение ширины */
+            transition: max-width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        /* Класс для узкого режима (Welcome) */
-        .container.narrow {
-            max-width: 600px;
+        /* Класс для широкого режима (Калькулятор) */
+        .container.wide {
+            max-width: 1050px;
         }
 
         .container::before {
@@ -116,25 +116,22 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* === НОВЫЙ СТИЛЬ: FUSION PANEL (ЕДИНЫЙ БЛОК) === */
+        /* === FUSION PANEL (ЕДИНЫЙ БЛОК) === */
         .calc-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Две равные колонки */
-            gap: 0; /* Убираем промежуток */
-            
-            /* Единый контур */
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            position: relative; /* Для позиционирования разделителя */
+            position: relative;
         }
 
-        /* Разделительная линия */
         .calc-grid::before {
             content: '';
             position: absolute;
-            top: 20px;
-            bottom: 20px;
+            top: 30px;
+            bottom: 30px;
             left: 50%;
             width: 1px;
             background: var(--border-color);
@@ -143,75 +140,56 @@
             opacity: 0.5;
         }
 
-        /* Иконка стрелочки по центру */
         .calc-grid::after {
             content: '→';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            
-            width: 32px;
-            height: 32px;
-            background: var(--bg-card); /* Цвет фона карточки, чтобы перекрыть линию */
+            width: 36px;
+            height: 36px;
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 50%;
-            
             display: flex;
             align-items: center;
             justify-content: center;
-            
             color: #ec4899;
             font-weight: 800;
             font-size: 1.2rem;
             z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* Стили для половинок */
         .calc-card {
-            padding: 30px; /* Больше воздуха */
-            border: none; /* Убираем границы у половинок */
+            padding: 35px;
+            border: none;
             background: transparent;
         }
 
-        /* Адаптив для мобильных (превращаем в вертикальный стек) */
-        @media (max-width: 768px) {
-            .calc-grid {
-                grid-template-columns: 1fr;
-            }
-            /* Линия становится горизонтальной */
-            .calc-grid::before {
-                top: 50%;
-                left: 20px;
-                right: 20px;
-                width: auto;
-                height: 1px;
-                transform: translateY(-50%);
-            }
-            /* Стрелка вниз */
-            .calc-grid::after {
-                content: '↓';
-            }
+        @media (max-width: 850px) {
+            .calc-grid { grid-template-columns: 1fr; }
+            .calc-grid::before { top: 50%; left: 30px; right: 30px; width: auto; height: 1px; transform: translateY(-50%); }
+            .calc-grid::after { content: '↓'; }
         }
 
         .card-header {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 800;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
         
         .calc-card.target .card-header { color: #ec4899; opacity: 1; }
 
         /* --- ПОЛЯ ВВОДА --- */
-        .input-group { margin-bottom: 18px; }
+        .input-group { margin-bottom: 20px; }
         .input-group:last-child { margin-bottom: 0; }
 
         label {
@@ -229,7 +207,7 @@
             background-color: var(--input-bg);
             border: 1px solid transparent;
             color: var(--text-main);
-            padding: 14px 16px;
+            padding: 16px 18px;
             border-radius: 12px;
             font-size: 0.95rem;
             box-sizing: border-box;
@@ -248,13 +226,13 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
-            padding-right: 35px;
+            background-position: right 16px center;
+            background-size: 18px;
+            padding-right: 40px;
             cursor: pointer;
         }
 
-        /* --- DASHBOARD (Итоги) --- */
+        /* --- DASHBOARD --- */
         .dashboard-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -272,41 +250,28 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
         .stat-value.burned { color: #ef4444; }
         .stat-value.residue { color: #10b981; }
-        .stat-value.total { color: #ec4899; font-size: 1.6rem; }
+        .stat-value.total { color: #ec4899; font-size: 1.8rem; }
 
-        /* --- ПРОГРЕСС БАР --- */
+        /* --- PROGRESS --- */
         .progress-container { margin-bottom: 30px; }
         .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
-        .progress-track { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; position: relative; }
+        .progress-track { height: 10px; background: #334155; border-radius: 5px; overflow: hidden; position: relative; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 100%); width: 0%; transition: width 0.5s ease; }
 
         /* --- КНОПКИ --- */
         .actions {
             display: flex;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         button {
             flex: 1;
-            padding: 18px;
+            padding: 20px;
             border: none;
             border-radius: 14px;
             color: white;
@@ -320,7 +285,7 @@
             gap: 10px;
         }
 
-        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.4); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.4); }
         button:active { transform: scale(0.98); }
 
         #generate-button { background: var(--brand-gradient); }
@@ -372,7 +337,7 @@
             gap: 10px;
             margin-bottom: 15px;
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
         }
 
@@ -385,9 +350,10 @@
             resize: vertical;
             min-height: 80px;
             width: 100%;
-            padding: 16px;
+            padding: 20px;
             border-radius: 12px;
             box-sizing: border-box;
+            font-size: 0.9rem;
         }
 
         .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -414,7 +380,7 @@
 </head>
 <body>
 
-<div class="container narrow"> 
+<div class="container"> 
     <div class="mode-switcher-container">
         <div class="mode-switcher">
             <input type="radio" id="mode-welcome" name="app-mode" value="welcome" checked>
@@ -611,7 +577,7 @@
 </div>
 
 <script>
-    // --- КОНФИГУРАЦИЯ ---
+    // --- КОНФИГУРАЦИЯ (ORIGINAL) ---
     const COURSE_CONFIG = {
         'Digital-дизайнер новой эры 3.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Базовый', tariffs: { 'Базовый': { months: 12, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'на 18 месяцев' }, 'Максимальный': { months: 14, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'навсегда' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', curatorDZ: 'Марина Ильенко', accessYears: 3 },
         'Коммерческий иллюстратор 2.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Оптимальный', tariffs: { 'Минимальный': { months: 9, chat: 'https://t.me/+KVHDByLijP8zYmJi' }, 'Оптимальный': { months: 13, chat: 'https://t.me/+KVHDByLijP8zYmJi' }, 'Продвинутый': { months: 17, chat: 'https://t.me/+KVHDByLijP8zYmJi' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', accessYears: 3, noStream: true },
@@ -625,20 +591,23 @@
         'Дизайн упаковки': { templateType: 'Packaging', months: 3, accessYears: 1, noStream: true }
     };
 
-    // --- UI HELPERS ---
+    // --- DOM ELEMENTS ---
     const radios = document.getElementsByName('app-mode');
     const sections = { welcome: document.getElementById('section-welcome'), calculator: document.getElementById('section-calculator') };
     const container = document.querySelector('.container');
     
+    // --- UI HELPERS ---
+    
+    // Switch tabs & resize container
     radios.forEach(radio => radio.addEventListener('change', (e) => {
         const mode = e.target.value;
         Object.values(sections).forEach(el => el.classList.remove('active'));
         sections[mode].classList.add('active');
         
         if (mode === 'welcome') {
-            container.classList.add('narrow');
+            container.classList.remove('wide'); // 800px
         } else {
-            container.classList.remove('narrow');
+            container.classList.add('wide'); // 1050px
         }
     }));
 
@@ -656,8 +625,213 @@
 
     function autoResize(el) {
         el.style.height = 'auto';
-        el.style.height = el.scrollHeight + 'px';
+        setTimeout(() => {
+            el.style.height = (el.scrollHeight + 5) + 'px';
+        }, 10);
     }
+
+    // --- HELPERS (DATES & TEXT) ---
+    const getGreetingTime = () => { const h=new Date().getHours(); return (h>=5&&h<12)?"Доброе утро":(h>=12&&h<18)?"Добрый день":"Добрый вечер"; };
+    const isInvalidDate = (date) => date instanceof Date && isNaN(date.getTime());
+    const formatDateDDMMYYYY = (date) => { if (isInvalidDate(date)) return '00.00.0000'; const d = date.getDate().toString().padStart(2, '0'); const m = (date.getMonth() + 1).toString().padStart(2, '0'); const y = date.getFullYear(); return `${d}.${m}.${y}`; };
+    const formatDateFull = (date) => { if (isInvalidDate(date)) return 'Неизвестная дата'; return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/(\sг\.)?$/, ' г.'); };
+    const formatDateStream = (date) => { if (isInvalidDate(date)) return 'Неизвестная дата'; return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }); };
+    const getMonthText = (n) => { if (n === 1) return 'месяц'; if (n >= 2 && n <= 4) return 'месяца'; return 'месяцев'; };
+    function calculateEndDate(startDate, months) { if (isInvalidDate(startDate)) return new Date(); const d = new Date(startDate); const dayOfMonth = d.getDate(); d.setMonth(d.getMonth() + months); if (d.getDate() < dayOfMonth) { d.setDate(0); } return d; }
+
+    // --- TEMPLATES (ORIGINAL RESTORED) ---
+    const COMMON_TEXT = {
+        greeting: (time) => `${time}🩷 На связи Команда заботы от школы Логомашина учит 💛 По всем вопросам обучения можно обращаться к нам ежедневно, работаем с 10:00 до 22:00 по мск\n\nМы здесь, чтобы поддержать вас на каждом шагу обучения. В этой школе вы всегда найдете поддержку, понимание и, конечно, много новых друзей. Если возникнут какие-либо вопросы или просто захочется поговорить, мы всегда открыты для вас.`,
+        introBlockPast: `🖇Все блоки курса, включая вводный блок "Самый важный курс для профессий", уже доступны для прохождения. Вводный блок находится в разделе "Обучение" — "Тренинги", самый первый в списке.`,
+        introBlockFuture: (date) => `🖇Обучение начинаем с изучения блока "Самый важный курс для профессий", это вводный блок, он находится в разделе "Обучение" — "Тренинги", самый первый в списке, остальные блоки будут доступны с ${date}`,
+        footer: `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\n🖇Нам очень важна обратная связь по курсу и нашей работе в целом. Логобот будет отправлять вам важную информацию по курсу, мероприятиям, а также ежемесячную анкету отзывов школы Логомашина учит. Её очень важно заполнять, так как это делает наше обучение и работу лучше для вас\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`,
+        marketPlaceFooter: `🖇Если возникают какие-либо вопросы по обучению технического и организационного плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`,
+        packagingFooter: `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`
+    };
+
+    function getStreamInfo(isPast, dateObj, streamTime, chatLink, isMotion = false) {
+        const dateFull = formatDateFull(dateObj);
+        const dateStream = formatDateStream(dateObj);
+        const time = streamTime || '19:00';
+        const dateDisplay = isMotion ? dateStream : dateFull;
+        if (isPast) {
+            return `🖇${dateDisplay} в ${time} по МСК прошел прямой эфир, где мы рассказали с чего начать обучение, рассмотрели учебную платформу, ответили на все вопросы в прямом эфире. Запись находится в чате.`;
+        } else {
+            return `🖇${dateDisplay} в ${time} по МСК пройдет прямой эфир, где мы расскажем с чего начать обучение, рассмотрим учебную платформу, ответим на все вопросы в прямом эфире, который пройдет в студенческом телеграмм-чате (он будет записан и выложен в чат ${chatLink || ''})`;
+        }
+    }
+
+    const GENERATORS = {
+        Standard: (config, data) => {
+            const { startDate, tariffName, isPast, dates } = data;
+            let months, chatLink, fullCourseName;
+            let t = null;
+            const isGraphDesignStep1 = (data.courseTitle === 'NEW 3.0 Графический дизайн' && tariffName === '1 ступень');
+
+            if (config.tariffs) {
+                const tariffsKeys = Object.keys(config.tariffs);
+                const keyToUse = tariffName || (tariffsKeys.length > 0 ? tariffsKeys[0] : null); 
+                t = config.tariffs[keyToUse];
+                if (!t) return `⚠️ Ошибка генерации: Не удалось найти данные тарифа.`;
+                months = t.months;
+                chatLink = t.chat;
+                fullCourseName = isGraphDesignStep1 ? 'Профессия Графический дизайнер 1 ступень. Посвящение в дизайн.' : `${data.courseTitle} // Тариф ${keyToUse}`;
+            } else {
+                months = config.months;
+                chatLink = config.chatLink;
+                fullCourseName = `${data.courseTitle}`;
+            }
+
+            const startPhrase = isPast ? `Мы начали обучение (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
+            const startPhraseMotion = isPast ? `Мы начали обучение (поток ${dates.stream})` : `Мы начинаем обучение вместе (поток ${dates.stream})`;
+
+            let curatorBlock = `🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения.`;
+            if (config.isMotion) curatorBlock += ` Также в чате курса есть куратор - ${config.curatorDZ}, к нему можно обращаться по вопросам, которые возникают в ходе выполнения ДЗ или если вы хотите уточнить что-то по обучающему материалу. На платформе вопросы задавать не нужно`;
+            else if (config.curatorDZ) curatorBlock += ` Также в чате курса есть куратор ${config.curatorDZ}, к ней можно обращаться по вопросам, которые возникают в ходе выполнения ДЗ или если вы хотите уточнить что-то по обучающему материалу. На платформе вопросы задавать не нужно`;
+
+            const parts = [];
+            let accessPart, accessSuffix;
+            if (t && t.customAccess) { accessPart = t.customAccess; accessSuffix = accessPart.toLowerCase() === 'навсегда' ? '' : ' со дня старта потока'; } 
+            else { accessPart = `на ${config.accessYears} года`; accessSuffix = ' со дня старта потока'; }
+
+            let headerLine;
+            if (isGraphDesignStep1) headerLine = `🖇У вас приобретен курс "${fullCourseName} Поток ${dates.short}", период обучения на нем ${months} ${getMonthText(months)} со дня старта потока, доступ к материалам курса ${accessPart}${accessSuffix}`;
+            else if (config.isMotion) headerLine = `🩷 У вас приобретен курс «${data.courseTitle}» // Поток ${dates.short} период обучения на нем ${months} ${getMonthText(months)} со дня старта потока, доступ к материалам курса ${accessPart}${accessSuffix}`;
+            else headerLine = `🖇У вас приобретен курс "${fullCourseName} // Поток ${dates.short}", период обучения на нем ${months} ${getMonthText(months)} со дня старта потока, доступ к материалам курса ${accessPart}${accessSuffix}`;
+            parts.push(headerLine);
+
+            const startLine = config.isMotion ? `🩷 ${startPhraseMotion}` : `🖇${startPhrase}`;
+            parts.push(`${startLine}, курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки и где будет проходить коммуникация с куратором. В чате студентов вы сможете найти новых друзей и единомышленников ${!config.isMotion ? chatLink : ''}`);
+            
+            if (!config.noStream) {
+                const streamInfo = getStreamInfo(isPast, startDate, config.streamTime, chatLink, config.isMotion);
+                parts.push(`${config.isMotion ? '🩷' : ''}${streamInfo} ${!isPast && !config.isMotion ? '‼️' : ''}`);
+            }
+
+            const bullet = config.isMotion ? '🩷' : '🖇';
+            parts.push(`${bullet}Ссылочка на студенческий чат: ${chatLink} ${!isPast && !config.isMotion ? '‼️' : ''}`);
+            parts.push(`${bullet}Важно заполнить анкету студента: ${config.anketa} ${!isPast && !config.isMotion ? '‼️' : ''}`);
+            
+            if (!config.isMotion) {
+                if (isGraphDesignStep1) {
+                    parts.push(`🖇Курс будет в разделе "Обучение" — "Тренинги", доступ с ${dates.short}`);
+                } else if (data.courseTitle === 'Digital-дизайнер новой эры 3.0') {
+                    const actionWord = isPast ? 'открыты' : 'откроются';
+                    parts.push(`🖇Обучение начинается с модуля «Добро пожаловать на борт».\nОн является вводным и находится внутри модуля «Подготовка к взлёту».\nНайти его можно в разделе «Обучение» → «Тренинги» курса «Digital-дизайнер новой эры».\n\nОстальные блоки курса ${actionWord} с ${dates.short}`);
+                } else {
+                    parts.push(isPast ? COMMON_TEXT.introBlockPast : COMMON_TEXT.introBlockFuture(dates.short));
+                }
+            }
+            parts.push(config.isMotion ? '🩷 ' + curatorBlock.replace(/🖇/g, '') : curatorBlock);
+            if (data.courseTitle === 'Digital-дизайнер новой эры 3.0' || data.courseTitle === 'Digital-дизайнер 2.0') {
+                parts.push('🖇Ваши работы будет проверять команда кураторов, поскольку мы подобрали преподавателей с углубленной экспертизой по каждому из модулей обучения. Это важная деталь обучения, которая тренирует вашу насмотренность и вы получаете опыт взаимодействия сразу с несколькими дизайнерами-экспертами.');
+            }
+            return parts.join('\n\n');
+        },
+        NeuroDesign: (config, data) => {
+            const { dates } = data;
+            const intro = `💛 У вас приобретен курс «${data.courseTitle} // ${dates.full}», период обучения на курсе ${config.months} месяца со дня покупки, период доступа к материалам курса на ${config.accessYears} год со дня покупки`;
+            const parts = [];
+            parts.push(intro);
+            parts.push(`Перед прохождением обучения обязательно посмотрите вводный урок\nhttps://get.logomachine.ru/pl/teach/control/lesson/view?id=344110695&editMode=0`);
+            parts.push(`🩷 Курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки и где будет проходить коммуникация с куратором. В чате студентов вы сможете найти новых друзей и единомышленников`);
+            parts.push(`🩷 Ссылочка на студенческий чат: ${config.chatLink}`);
+            parts.push(`🩷 Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. Также в чате курса есть эксперты, к ним можно обращаться по вопросам, которые возникают в ходе выполнения ДЗ или если вы хотите уточнить что-то по обучающему материалу. На платформе вопросы задавать не нужно`);
+            return parts.join('\n\n');
+        },
+        Marketplace: (config, data) => {
+            const { startDate, tariffName } = data;
+            const t = config.tariffs[tariffName || Object.keys(config.tariffs)[0]];
+            if (!t) return `⚠️ Ошибка генерации`;
+            const datesFormatted = {
+                start: formatDateDDMMYYYY(startDate),
+                end: formatDateDDMMYYYY(calculateEndDate(startDate, t.months)),
+                access: formatDateDDMMYYYY(calculateEndDate(startDate, 12))
+            };
+            const parts = [];
+            if (t.curator) { 
+                 parts.push(`У вас приобретен курс ${data.courseTitle} ${tariffName} — период обучения ${t.months} ${getMonthText(t.months)}, с ${datesFormatted.start} г. до ${datesFormatted.end}, доступ к материалам курса на ${config.accessYears} год `);
+                 parts.push(`🖇Курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки и где будет проходить коммуникация с куратором.  В чате студентов вы сможете найти новых друзей и единомышленников `);
+                 parts.push(`🖇Ссылочка на студенческий чат: ${t.chat}`);
+                 parts.push(`🖇Важно заполнить анкету студента: ${config.anketa}`);
+                 parts.push(`🖇Курс находится в разделе "Обучение" — "Тренинги"`);
+                 parts.push(`🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения. Также в чате курса есть куратор - ${t.curator}, к нему можно обращаться по вопросам, которые возникают в ходе выполнения ДЗ или если вы хотите уточнить что-то по обучающему материалу. На платформе вопросы задавать не нужно`);
+            } else { 
+                parts.push(`🖇У вас приобретен курс "${data.courseTitle} ${tariffName}", период доступа к материалам курса с ${datesFormatted.start} по ${datesFormatted.access} г.`);
+                parts.push(`🖇Курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки. В чате студентов вы сможете найти новых друзей и единомышленников`);
+                parts.push(`🖇Ссылочка на студенческий чат: ${t.chat}`);
+                parts.push(`🖇Курс находится в разделе "Обучение" — "Тренинги", модули в нем рекомендуется проходить по порядку`);
+            }
+            return parts.join('\n\n');
+        },
+        Packaging: (config, data) => {
+            const { startDate, isPast, dates } = data;
+            const startPhrase = isPast ? `Мы начали обучение вместе (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
+            const parts = [];
+            parts.push(`🖇У вас приобретен курс «${data.courseTitle}» // Поток ${dates.short}, период обучения ${config.months} месяца со дня старта потока, доступ к материалам курса на ${config.accessYears} год со дня старта потока`);
+            parts.push(`🖇${startPhrase}, курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки.`);
+            if (isPast) parts.push(`🖇Курс находится в разделе «Обучение» — «Тренинги»`);
+            else parts.push(`🖇Курс будет доступен в разделе «Обучение» — «Тренинги» с ${dates.short}`);
+            parts.push(`🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения.`);
+            return parts.join('\n\n');
+        }
+    };
+
+    // --- WELCOME LOGIC ---
+    const elsWelcome = { 
+        course: document.getElementById('course-select'), 
+        tariffCont: document.getElementById('tariff-container'), 
+        tariff: document.getElementById('tariff-select'), 
+        date: document.getElementById('start-date'), 
+        form: document.getElementById('welcome-form'),
+        resultBox: document.getElementById('result-box-welcome'),
+        resultText: document.getElementById('result-template'),
+        copyBtn: document.getElementById('copy-button')
+    };
+
+    elsWelcome.course.addEventListener('change', () => {
+        const c = COURSE_CONFIG[elsWelcome.course.value];
+        elsWelcome.tariff.innerHTML = '';
+        if (c && c.tariffs) {
+            elsWelcome.tariffCont.style.display = 'block'; elsWelcome.tariff.setAttribute('required','');
+            Object.keys(c.tariffs).forEach((n,i) => {
+                const opt = document.createElement('option'); opt.value = n;
+                opt.textContent = `«${n}»` + (c.templateType !== 'Marketplace' ? ` (${c.tariffs[n].months} мес)` : '');
+                if(i===0) elsWelcome.tariff.value=n;
+                if(n===c.defaultTariff) opt.selected=true;
+                elsWelcome.tariff.appendChild(opt);
+            });
+        } else { elsWelcome.tariffCont.style.display='none'; elsWelcome.tariff.removeAttribute('required'); }
+    });
+
+    elsWelcome.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const courseTitle = elsWelcome.course.value;
+        const tariffName = elsWelcome.tariff.value;
+        const config = COURSE_CONFIG[courseTitle];
+        if(!config) return;
+        
+        const rawDate = elsWelcome.date.value;
+        const startDate = new Date(rawDate.replace(/-/g, '/'));
+        const today = new Date(); today.setHours(0,0,0,0);
+        const isPast = startDate < today;
+        const dates = { full: formatDateFull(startDate), short: formatDateDDMMYYYY(startDate), stream: formatDateStream(startDate) };
+
+        const generator = GENERATORS[config.templateType] || GENERATORS.Standard;
+        const bodyText = generator(config, { courseTitle, tariffName, startDate, isPast, dates });
+
+        let footerText = COMMON_TEXT.footer;
+        if(config.templateType === 'Packaging') footerText = COMMON_TEXT.packagingFooter;
+        if(config.templateType === 'Marketplace') footerText = COMMON_TEXT.marketPlaceFooter;
+
+        const fullText = `${getGreetingTime()}🩷 На связи Команда заботы от школы Логомашина учит 💛\n\n${bodyText}\n\n${footerText}`;
+        
+        elsWelcome.resultText.value = fullText;
+        elsWelcome.resultBox.classList.add('is-visible');
+        elsWelcome.copyBtn.style.display = 'flex';
+        autoResize(elsWelcome.resultText);
+        elsWelcome.resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
     // --- REAL-TIME CALCULATOR LOGIC ---
     document.getElementById('calc-request-date').valueAsDate = new Date();
@@ -790,79 +964,6 @@
     elsCalc.inputs.forEach(input => {
         input.addEventListener('input', calculateLive);
         input.addEventListener('change', calculateLive);
-    });
-
-    // --- WELCOME LOGIC ---
-    const elsWelcome = { 
-        course: document.getElementById('course-select'), 
-        tariffCont: document.getElementById('tariff-container'), 
-        tariff: document.getElementById('tariff-select'), 
-        date: document.getElementById('start-date'), 
-        form: document.getElementById('welcome-form'),
-        resultBox: document.getElementById('result-box-welcome'),
-        resultText: document.getElementById('result-template'),
-        copyBtn: document.getElementById('copy-button')
-    };
-
-    elsWelcome.course.addEventListener('change', () => {
-        const c = COURSE_CONFIG[elsWelcome.course.value];
-        elsWelcome.tariff.innerHTML = '';
-        if (c && c.tariffs) {
-            elsWelcome.tariffCont.style.display = 'block'; elsWelcome.tariff.setAttribute('required','');
-            Object.keys(c.tariffs).forEach((n,i) => {
-                const opt = document.createElement('option'); opt.value = n;
-                opt.textContent = `«${n}»` + (c.templateType !== 'Marketplace' ? ` (${c.tariffs[n].months} мес)` : '');
-                if(i===0) elsWelcome.tariff.value=n;
-                if(n===c.defaultTariff) opt.selected=true;
-                elsWelcome.tariff.appendChild(opt);
-            });
-        } else { elsWelcome.tariffCont.style.display='none'; elsWelcome.tariff.removeAttribute('required'); }
-    });
-
-    const formatDateDDMMYYYY = (d) => { const dd = String(d.getDate()).padStart(2,'0'), mm = String(d.getMonth()+1).padStart(2,'0'), y = d.getFullYear(); return `${dd}.${mm}.${y}`; };
-    const formatDateFull = (d) => d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'}).replace(/(\sг\.)?$/, ' г.');
-    const formatDateStream = (d) => d.toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
-    const getMonthText = (n) => (n===1)?'месяц':(n>=2&&n<=4)?'месяца':'месяцев';
-    const getGreetingTime = () => { const h=new Date().getHours(); return (h>=5&&h<12)?"Доброе утро":(h>=12&&h<18)?"Добрый день":"Добрый вечер"; };
-
-    elsWelcome.form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const courseTitle = elsWelcome.course.value;
-        const tariffName = elsWelcome.tariff.value;
-        const config = COURSE_CONFIG[courseTitle];
-        if(!config) return;
-        
-        const rawDate = elsWelcome.date.value;
-        const startDate = new Date(rawDate.replace(/-/g, '/'));
-        const today = new Date(); today.setHours(0,0,0,0);
-        const isPast = startDate < today;
-        const dates = { full: formatDateFull(startDate), short: formatDateDDMMYYYY(startDate), stream: formatDateStream(startDate) };
-
-        let bodyText = '';
-        const startPhrase = isPast ? `Мы начали обучение (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
-        
-        if(config.templateType === 'Packaging') {
-             bodyText = `🖇У вас приобретен курс «${courseTitle}» // Поток ${dates.short}, период обучения ${config.months} месяца со дня старта потока, доступ к материалам курса на ${config.accessYears} год со дня старта потока\n\n🖇${startPhrase}, курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки.\n\n` + (isPast ? `🖇Курс находится в разделе «Обучение» — «Тренинги»` : `🖇Курс будет доступен в разделе «Обучение» — «Тренинги» с ${dates.short}`) + `\n\n🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения.`;
-        } else if (config.templateType === 'Marketplace') {
-             const t = config.tariffs[tariffName];
-             bodyText = `У вас приобретен курс ${courseTitle} ${tariffName} — период обучения ${t.months} ${getMonthText(t.months)}... (Текст сгенерирован)`;
-        } else {
-             let m = config.months; let cLink = config.chatLink;
-             if(config.tariffs) { m = config.tariffs[tariffName].months; cLink = config.tariffs[tariffName].chat; }
-             bodyText = `🖇У вас приобретен курс "${courseTitle} // ${tariffName || 'Поток'} ${dates.short}", период обучения ${m} ${getMonthText(m)}... \n\n${startPhrase}, курс размещен на GetCourse. Ссылка на чат: ${cLink}`;
-        }
-
-        const footer = config.templateType === 'Packaging' ? 
-            `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login` :
-            `🖇Если возникают какие-либо вопросы... (Стандартный футер) ... С нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`;
-
-        const fullText = `${getGreetingTime()}🩷 На связи Команда заботы от школы Логомашина учит 💛\n\n${bodyText}\n\n${footer}`;
-        
-        elsWelcome.resultText.value = fullText;
-        elsWelcome.resultBox.classList.add('is-visible');
-        elsWelcome.copyBtn.style.display = 'flex';
-        autoResize(elsWelcome.resultText);
-        elsWelcome.resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
 </script>
