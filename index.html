@@ -139,7 +139,7 @@
             background-color: var(--input-bg);
             border: 2px solid transparent;
             color: var(--text-main);
-            padding: 14px 16px; /* Оптимальный размер */
+            padding: 14px 16px; 
             border-radius: 12px;
             font-size: 0.95rem;
             box-sizing: border-box;
@@ -147,18 +147,16 @@
             font-family: inherit;
         }
 
-        /* Исправление стрелочки Select */
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center; /* Позиция стрелки */
+            background-position: right 14px center; 
             background-size: 18px;
-            padding-right: 40px; /* Отступ справа, чтобы текст не наезжал на стрелку */
+            padding-right: 40px; 
             cursor: pointer;
         }
 
-        /* Фокус */
         input:focus, select:focus, textarea:focus {
             outline: none;
             background-color: #1e293b; 
@@ -166,7 +164,6 @@
             box-shadow: 0 0 0 4px var(--brand-glow);
         }
 
-        /* Анимация появления доп полей */
         .fade-in {
             animation: fadeIn 0.4s ease;
         }
@@ -175,7 +172,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- КНОПКИ (УМЕНЬШЕННЫЕ) --- */
+        /* --- КНОПКИ --- */
         .actions {
             display: flex;
             gap: 12px;
@@ -184,12 +181,12 @@
 
         button {
             flex: 1;
-            padding: 14px 20px; /* Уменьшил padding */
+            padding: 14px 20px; 
             border: none;
             border-radius: 12px;
             color: white;
             font-weight: 700;
-            font-size: 0.95rem; /* Уменьшил шрифт */
+            font-size: 0.95rem; 
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
             display: flex;
@@ -277,20 +274,53 @@
             overflow-y: hidden; 
         }
         
-        /* Разделители в форме */
+        /* --- ЗАГОЛОВКИ СЕКЦИЙ В КАЛЬКУЛЯТОРЕ (ОБНОВЛЕННЫЕ) --- */
         .form-section-title {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-weight: 700;
+            color: var(--text-main); /* Сделал белым, чтобы было виднее */
+            font-size: 1.1rem;      /* Увеличил шрифт */
+            font-weight: 800;       /* Сделал жирнее */
             text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-top: 15px;
+            letter-spacing: 0.5px;
+            margin-top: 25px;       /* Отступ сверху побольше */
             margin-bottom: -5px;
-            border-bottom: 1px solid rgba(71, 85, 105, 0.5);
-            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(236, 72, 153, 0.5); /* Розовая линия подчеркивания */
+            padding-bottom: 10px;
         }
 
-        /* Адаптив для маленьких экранов */
+        /* --- КНОПКА-ССЫЛКА КНИГА ПРОДАЖ --- */
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .label-row label {
+            margin-bottom: 0; /* Убираем отступ у лейбла, так как он внутри флекса */
+        }
+
+        .sales-book-link {
+            font-size: 0.75rem;
+            color: #ec4899;
+            text-decoration: none;
+            border: 1px solid #ec4899;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        .sales-book-link:hover {
+            background: #ec4899;
+            color: white;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+        }
+
         @media (max-width: 600px) {
             .actions {
                 flex-direction: column;
@@ -367,7 +397,7 @@
             <div class="form-section-title">Текущее обучение</div>
 
             <div class="input-group">
-                <label>Ваш текущий курс (из списка)</label>
+                <label>Текущий курс студента (из списка)</label>
                 <select id="calc-source-course">
                     <option value="" selected>Ввести вручную / Не выбрано</option>
                     <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
@@ -428,7 +458,12 @@
             </div>
 
             <div class="input-group">
-                <label>Стоимость НОВОГО курса (руб)</label>
+                <div class="label-row">
+                    <label>Стоимость НОВОГО курса (руб)</label>
+                    <a href="https://docs.google.com/spreadsheets/d/1tGX-WJlBGYzmaci4Tb19goY_AQzbHnk3xZJ-pbXyLRs/edit?gid=1976664245#gid=1976664245" target="_blank" class="sales-book-link">
+                        📖 Книга продаж
+                    </a>
+                </div>
                 <input type="number" id="calc-new-cost" placeholder="Например: 150000" required>
             </div>
 
