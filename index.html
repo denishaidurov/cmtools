@@ -232,6 +232,15 @@
             cursor: pointer;
         }
 
+        /* --- АНИМАЦИЯ ПОЯВЛЕНИЯ (fade-in) --- */
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* --- DASHBOARD --- */
         .dashboard-stats {
             display: grid;
@@ -265,8 +274,8 @@
         /* --- КНОПКИ --- */
         .actions {
             display: flex;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         button {
@@ -350,7 +359,7 @@
             resize: vertical;
             min-height: 80px;
             width: 100%;
-            padding: 20px;
+            padding: 16px;
             border-radius: 12px;
             box-sizing: border-box;
             font-size: 0.9rem;
@@ -520,6 +529,11 @@
                         <input type="text" id="calc-new-course-manual" class="fade-in" style="display:none; margin-top:10px;" placeholder="Название курса">
                     </div>
 
+                    <div class="input-group fade-in" id="calc-new-tariff-container" style="display:none;">
+                        <label>Тариф нового курса</label>
+                        <select id="calc-new-tariff"></select>
+                    </div>
+
                     <div class="input-group">
                         <div class="label-row">
                             <label>Стоимость нового (руб)</label>
@@ -597,7 +611,6 @@
     const sections = { welcome: document.getElementById('section-welcome'), calculator: document.getElementById('section-calculator') };
     const container = document.querySelector('.container');
     
-    // Switch tabs & resize container
     radios.forEach(radio => radio.addEventListener('change', (e) => {
         const mode = e.target.value;
         Object.values(sections).forEach(el => el.classList.remove('active'));
@@ -845,7 +858,9 @@
         duration: document.getElementById('calc-duration-months'),
         newCourseSelect: document.getElementById('calc-new-course-name'),
         newCourseManual: document.getElementById('calc-new-course-manual'),
-        // Output fields
+        newTariffCont: document.getElementById('calc-new-tariff-container'),
+        newTariff: document.getElementById('calc-new-tariff'),
+        
         statConsumed: document.getElementById('stat-consumed'),
         statResidue: document.getElementById('stat-residue'),
         statToPay: document.getElementById('stat-topay'),
@@ -855,6 +870,7 @@
         resultText: document.getElementById('result-text-calc') 
     };
 
+    // Слушатель на ИСХОДНЫЙ курс
     elsCalc.sourceCourse.addEventListener('change', () => {
         const config = COURSE_CONFIG[elsCalc.sourceCourse.value];
         elsCalc.sourceTariff.innerHTML = '';
@@ -871,11 +887,12 @@
             }
         } else {
             elsCalc.sourceTariffCont.style.display = 'none';
-            elsCalc.duration.value = '';
+            elsCalc.duration.value = '12';
         }
         calculateLive();
     });
 
+    // Слушатель на тариф ИСХОДНОГО курса
     elsCalc.sourceTariff.addEventListener('change', () => {
         const config = COURSE_CONFIG[elsCalc.sourceCourse.value];
         if (config && config.tariffs && config.tariffs[elsCalc.sourceTariff.value]) {
@@ -885,24 +902,57 @@
         calculateLive();
     });
 
+    // Слушатель на НОВЫЙ курс (выбор)
     elsCalc.newCourseSelect.addEventListener('change', () => {
-        if (elsCalc.newCourseSelect.value === 'manual') {
+        const selectedVal = elsCalc.newCourseSelect.value;
+        
+        // 1. Логика ручного ввода
+        if (selectedVal === 'manual') {
             elsCalc.newCourseManual.style.display = 'block';
             elsCalc.newCourseManual.focus();
+            // Скрываем тарифы при ручном вводе, т.к. не знаем конфиг
+            elsCalc.newTariffCont.style.display = 'none';
         } else {
             elsCalc.newCourseManual.style.display = 'none';
+            
+            // 2. Логика тарифов для нового курса
+            const config = COURSE_CONFIG[selectedVal];
+            elsCalc.newTariff.innerHTML = ''; // Очистка
+            
+            if (config && config.tariffs) {
+                elsCalc.newTariffCont.style.display = 'block';
+                Object.keys(config.tariffs).forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    elsCalc.newTariff.appendChild(opt);
+                });
+            } else {
+                elsCalc.newTariffCont.style.display = 'none';
+            }
         }
         calculateLive();
     });
+
+    // Слушатель на тариф НОВОГО курса
+    elsCalc.newTariff.addEventListener('change', calculateLive);
 
     function calculateLive() {
         const paid = parseFloat(document.getElementById('calc-paid').value) || 0;
         const durationMonths = parseFloat(document.getElementById('calc-duration-months').value) || 12;
         const startDateStr = document.getElementById('calc-start-date').value;
         const requestDateStr = document.getElementById('calc-request-date').value;
+        
         const selectVal = document.getElementById('calc-new-course-name').value;
         const manualVal = document.getElementById('calc-new-course-manual').value;
         const newCourseName = (selectVal === 'manual') ? manualVal : selectVal;
+        
+        // Получаем тариф нового курса (если есть)
+        let newTariffName = '';
+        if (elsCalc.newTariffCont.style.display !== 'none') {
+            newTariffName = elsCalc.newTariff.value;
+        }
+
         const newCost = parseFloat(document.getElementById('calc-new-cost').value) || 0;
         const discountPercent = parseFloat(document.getElementById('calc-discount').value) || 0;
 
@@ -948,7 +998,11 @@
         elsCalc.progDaysTotal.textContent = `Всего ${totalCourseDays} дн.`;
 
         const getInstallment = (m) => Math.round(toPayBase / m).toLocaleString('ru-RU');
-        const text = `Стоимость перевода на курс ${newCourseName || '...'} составит р.${fmt(toPayBase)}
+        
+        // Формирование строки названия курса с тарифом
+        const fullNewCourseString = newTariffName ? `${newCourseName} (${newTariffName})` : (newCourseName || '...');
+
+        const text = `Стоимость перевода на курс ${fullNewCourseString} составит р.${fmt(toPayBase)}
 Возможна беспроцентная рассрочка в банке: 
 на 6 месяцев — ${getInstallment(6)} р./мес.
 на 12 месяцев — ${getInstallment(12)} р./мес.
