@@ -14,11 +14,13 @@
             --text-muted: #94a3b8;    
             --border-color: #475569;
             
-            /* Градиенты бренда */
+            /* Градиенты и цвета */
             --brand-gradient: linear-gradient(135deg, #ec4899 0%, #eab308 100%); 
             --brand-gradient-hover: linear-gradient(135deg, #f06292 0%, #ffca28 100%); 
             --brand-glow: rgba(236, 72, 153, 0.4);
             --success-color: #10b981;
+            --danger-color: #ef4444;
+            --accent-bg: rgba(236, 72, 153, 0.05);
 
             /* Фон для кода */
             --code-bg-light: #1a2333;
@@ -38,7 +40,7 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px; /* Ширина для Калькулятора (по умолчанию) */
             background: var(--bg-card);
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -46,6 +48,14 @@
             padding: 40px;
             position: relative;
             overflow: hidden;
+            
+            /* АНИМАЦИЯ ИЗМЕНЕНИЯ ШИРИНЫ */
+            transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Класс для узкого режима (Welcome) */
+        .container.narrow {
+            max-width: 600px;
         }
 
         .container::before {
@@ -59,7 +69,7 @@
             border-radius: 24px 24px 0 0;
         }
 
-        /* --- СТИЛИ ПЕРЕКЛЮЧАТЕЛЯ --- */
+        /* --- ПЕРЕКЛЮЧАТЕЛЬ --- */
         .mode-switcher-container {
             display: flex;
             justify-content: center;
@@ -75,9 +85,7 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .mode-switcher input[type="radio"] {
-            display: none;
-        }
+        .mode-switcher input[type="radio"] { display: none; }
 
         .mode-switcher label {
             padding: 10px 35px;
@@ -97,141 +105,246 @@
             box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
         }
 
-        .mode-switcher label:hover {
-            color: var(--text-main);
-        }
-
-        .grid-layout {
-            display: grid;
-            gap: 20px;
-        }
-
-        /* Секции для вкладок */
+        /* --- СЕКЦИИ --- */
         .section-content {
             display: none;
             animation: fadeInSection 0.4s ease;
         }
-        .section-content.active {
-            display: block;
-        }
+        .section-content.active { display: block; }
         @keyframes fadeInSection {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* === НОВЫЙ СТИЛЬ: FUSION PANEL (ЕДИНЫЙ БЛОК) === */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Две равные колонки */
+            gap: 0; /* Убираем промежуток */
+            
+            /* Единый контур */
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            position: relative; /* Для позиционирования разделителя */
+        }
+
+        /* Разделительная линия */
+        .calc-grid::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 50%;
+            width: 1px;
+            background: var(--border-color);
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        /* Иконка стрелочки по центру */
+        .calc-grid::after {
+            content: '→';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            width: 32px;
+            height: 32px;
+            background: var(--bg-card); /* Цвет фона карточки, чтобы перекрыть линию */
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            color: #ec4899;
+            font-weight: 800;
+            font-size: 1.2rem;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Стили для половинок */
+        .calc-card {
+            padding: 30px; /* Больше воздуха */
+            border: none; /* Убираем границы у половинок */
+            background: transparent;
+        }
+
+        /* Адаптив для мобильных (превращаем в вертикальный стек) */
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+            /* Линия становится горизонтальной */
+            .calc-grid::before {
+                top: 50%;
+                left: 20px;
+                right: 20px;
+                width: auto;
+                height: 1px;
+                transform: translateY(-50%);
+            }
+            /* Стрелка вниз */
+            .calc-grid::after {
+                content: '↓';
+            }
+        }
+
+        .card-header {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.8;
+        }
+        
+        .calc-card.target .card-header { color: #ec4899; opacity: 1; }
+
+        /* --- ПОЛЯ ВВОДА --- */
+        .input-group { margin-bottom: 18px; }
+        .input-group:last-child { margin-bottom: 0; }
+
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .input-group {
-            position: relative;
-        }
-
-        /* --- СТИЛИ ПОЛЕЙ ВВОДА --- */
         input, select, textarea {
             width: 100%;
             background-color: var(--input-bg);
-            border: 2px solid transparent;
+            border: 1px solid transparent;
             color: var(--text-main);
-            padding: 14px 16px; 
+            padding: 14px 16px;
             border-radius: 12px;
             font-size: 0.95rem;
             box-sizing: border-box;
-            transition: all 0.2s ease; 
             font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            background-color: #1e293b;
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px var(--brand-glow);
         }
 
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center; 
-            background-size: 18px;
-            padding-right: 40px; 
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 35px;
             cursor: pointer;
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            background-color: #1e293b; 
-            border-color: #ec4899; 
-            box-shadow: 0 0 0 4px var(--brand-glow);
+        /* --- DASHBOARD (Итоги) --- */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+            margin-bottom: 30px;
         }
 
-        .fade-in {
-            animation: fadeIn 0.4s ease;
+        .stat-box {
+            background: var(--input-bg);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 700;
         }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .stat-value.burned { color: #ef4444; }
+        .stat-value.residue { color: #10b981; }
+        .stat-value.total { color: #ec4899; font-size: 1.6rem; }
+
+        /* --- ПРОГРЕСС БАР --- */
+        .progress-container { margin-bottom: 30px; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+        .progress-track { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 100%); width: 0%; transition: width 0.5s ease; }
 
         /* --- КНОПКИ --- */
         .actions {
             display: flex;
             gap: 12px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         button {
             flex: 1;
-            padding: 14px 20px; 
+            padding: 18px;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             color: white;
             font-weight: 700;
-            font-size: 0.95rem; 
+            font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 10px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.4);
-        }
-
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -5px rgba(0,0,0,0.4); }
         button:active { transform: scale(0.98); }
 
-        #generate-button, #calc-button {
-            background: var(--brand-gradient);
-        }
-        #generate-button:hover, #calc-button:hover {
-            background: var(--brand-gradient-hover);
-        }
+        #generate-button { background: var(--brand-gradient); }
+        #generate-button:hover { background: var(--brand-gradient-hover); }
 
         #copy-button, #calc-copy-button {
             background-color: #334155;
             border: 1px solid var(--success-color);
             color: var(--success-color);
-            display: flex; 
-            opacity: 1;
         }
-        
         #copy-button:hover, #calc-copy-button:hover {
             background-color: var(--success-color);
             color: white;
         }
 
-        /* --- БЛОК РЕЗУЛЬТАТА --- */
+        /* --- RESULT BOX --- */
         .result-box {
-            margin-top: 30px;
+            margin-top: 40px;
             border-top: 1px solid var(--border-color);
-            padding-top: 25px;
+            padding-top: 30px;
+            display: none; 
             opacity: 0;
             transform: translateY(20px);
-            transition: border-top 0.3s ease; 
+            transition: all 0.3s ease; 
         }
         
         @keyframes resultEntry {
@@ -240,98 +353,68 @@
         }
 
         .result-box.is-visible {
+            display: block; 
             animation: resultEntry 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
+        }
+
+        .result-box.calc-visible {
+            display: block;
+            opacity: 1;
+            transform: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border: none;
         }
 
         .result-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 15px;
             color: var(--text-main);
             font-size: 0.9rem;
+            font-weight: 700;
         }
 
         textarea {
-            font-family: 'Consolas', 'Monaco', monospace; 
-            background-color: var(--code-bg-light); 
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: var(--code-bg-light);
             color: #e2e8f0;
             border: 1px solid var(--border-color);
             line-height: 1.6;
-            font-size: 0.9rem;
             resize: vertical;
+            min-height: 80px;
+            width: 100%;
             padding: 16px;
             border-radius: 12px;
             box-sizing: border-box;
-            width: 100%;
-            height: 50px; 
-            min-height: 50px; 
-            transition: height 0.5s cubic-bezier(0.4, 0.0, 0.2, 1); 
-            overflow-y: hidden; 
         }
 
-        textarea.is-filled {
-            overflow-y: hidden; 
-        }
+        .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .label-row label { margin-bottom: 0; }
         
-        /* --- ЗАГОЛОВКИ СЕКЦИЙ В КАЛЬКУЛЯТОРЕ --- */
-        .form-section-title {
-            color: var(--text-main); 
-            font-size: 1.1rem;      
-            font-weight: 800;       
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 25px;       
-            margin-bottom: -5px;
-            border-bottom: 2px solid rgba(236, 72, 153, 0.5); 
-            padding-bottom: 10px;
-        }
-
-        /* --- КНОПКА-ССЫЛКА КНИГА ПРОДАЖ --- */
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-        
-        .label-row label {
-            margin-bottom: 0; 
-        }
-
         .sales-book-link {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #ec4899;
             text-decoration: none;
             border: 1px solid #ec4899;
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 8px;
             font-weight: 700;
             text-transform: uppercase;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
             background: rgba(236, 72, 153, 0.05);
         }
-
-        .sales-book-link:hover {
-            background: #ec4899;
-            color: white;
-            box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
-        }
+        .sales-book-link:hover { background: #ec4899; color: white; }
 
         @media (max-width: 600px) {
-            .actions {
-                flex-direction: column;
-            }
+            .dashboard-stats { grid-template-columns: 1fr; }
         }
-
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container narrow"> 
     <div class="mode-switcher-container">
         <div class="mode-switcher">
             <input type="radio" id="mode-welcome" name="app-mode" value="welcome" checked>
@@ -342,9 +425,9 @@
     </div>
 
     <div id="section-welcome" class="section-content active">
-        <form id="welcome-form" class="grid-layout">
+        <form id="welcome-form" class="grid-layout" style="display:grid; gap:20px;">
             <div class="input-group">
-                <label for="course-select">Выберите курс</label>
+                <label>Выберите курс</label>
                 <select id="course-select" required>
                     <option value="" disabled selected>Не выбрано</option>
                     <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
@@ -361,12 +444,12 @@
             </div>
 
             <div class="input-group fade-in" id="tariff-container" style="display:none;">
-                <label for="tariff-select">Тариф обучения</label>
+                <label>Тариф обучения</label>
                 <select id="tariff-select"></select>
             </div>
 
             <div class="input-group">
-                <label for="start-date">Дата старта</label>
+                <label>Дата старта</label>
                 <input type="date" id="start-date" required>
             </div>
 
@@ -374,7 +457,7 @@
                 <button type="submit" id="generate-button">
                     <span>⚡ Сгенерировать</span>
                 </button>
-                <button type="button" id="copy-button" onclick="copyToClipboard('result-template', 'copy-button')">
+                <button type="button" id="copy-button" onclick="copyToClipboard('result-template', 'copy-button')" style="display:none;">
                     <span>📋 Копировать</span>
                 </button>
             </div>
@@ -392,319 +475,220 @@
     </div>
 
     <div id="section-calculator" class="section-content">
-        <form id="calculator-form" class="grid-layout">
+        <form id="calculator-form">
             
-            <div class="form-section-title">Текущее обучение</div>
+            <div class="calc-grid">
+                
+                <div class="calc-card source">
+                    <div class="card-header">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Текущее обучение
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Курс (из списка)</label>
+                        <select id="calc-source-course">
+                            <option value="" selected>Ввести вручную / Не выбрано</option>
+                            <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
+                            <option value="Digital-дизайнер 2.0">Digital-дизайнер 2.0</option>
+                            <option value="NEW 3.0 Графический дизайн">NEW 3.0 Графический дизайн</option>
+                            <option value="NEW Профессия UX/UI-дизайнер">NEW Профессия UX/UI-дизайнер</option>
+                            <option value="Коммерческий иллюстратор 2.0">Коммерческий иллюстратор 2.0</option>
+                            <option value="Веб-дизайнер 2.0">Веб-дизайнер 2.0</option>
+                            <option value="Нейродизайнер 2.0">Нейродизайнер 2.0</option>
+                            <option value="Motion-дизайнер">Motion-дизайнер</option>
+                            <option value="NEW Дизайн карточек для маркетплейсов">NEW Дизайн карточек для маркетплейсов</option>
+                            <option value="Дизайн упаковки">Дизайн упаковки</option>
+                        </select>
+                    </div>
 
-            <div class="input-group">
-                <label>Текущий курс студента (из списка)</label>
-                <select id="calc-source-course">
-                    <option value="" selected>Ввести вручную / Не выбрано</option>
-                    <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
-                    <option value="Digital-дизайнер 2.0">Digital-дизайнер 2.0</option>
-                    <option value="NEW 3.0 Графический дизайн">NEW 3.0 Графический дизайн</option>
-                    <option value="NEW Профессия UX/UI-дизайнер">NEW Профессия UX/UI-дизайнер</option>
-                    <option value="Коммерческий иллюстратор 2.0">Коммерческий иллюстратор 2.0</option>
-                    <option value="Веб-дизайнер 2.0">Веб-дизайнер 2.0</option>
-                    <option value="Нейродизайнер 2.0">Нейродизайнер 2.0</option>
-                    <option value="Motion-дизайнер">Motion-дизайнер</option>
-                    <option value="NEW Дизайн карточек для маркетплейсов">NEW Дизайн карточек для маркетплейсов</option>
-                    <option value="Дизайн упаковки">Дизайн упаковки</option>
-                </select>
-            </div>
+                    <div class="input-group fade-in" id="calc-source-tariff-container" style="display:none;">
+                        <label>Тариф</label>
+                        <select id="calc-source-tariff"></select>
+                    </div>
 
-            <div class="input-group fade-in" id="calc-source-tariff-container" style="display:none;">
-                <label>Ваш тариф</label>
-                <select id="calc-source-tariff"></select>
-            </div>
+                    <div class="input-group">
+                        <label>Оплачено (руб)</label>
+                        <input type="number" id="calc-paid" placeholder="0" required>
+                    </div>
 
-            <div class="input-group">
-                <label>Длительность обучения (мес)</label>
-                <input type="number" id="calc-duration-months" placeholder="Например: 12" value="12" required>
-            </div>
+                    <div class="input-group">
+                        <label>Длительность (мес)</label>
+                        <input type="number" id="calc-duration-months" value="12" required>
+                    </div>
 
-            <div class="input-group">
-                <label>Стоимость, которую оплатил студент (руб)</label>
-                <input type="number" id="calc-paid" placeholder="Например: 100000" required>
-            </div>
-
-            <div class="input-group">
-                <label>Дата начала обучения</label>
-                <input type="date" id="calc-start-date" required>
-            </div>
-
-            <div class="input-group">
-                <label>Дата обращения (по умолчанию сегодня)</label>
-                <input type="date" id="calc-request-date" required>
-            </div>
-
-            <div class="form-section-title">Перевод на новый курс</div>
-
-            <div class="input-group">
-                <label>На какой курс перевод (Название)</label>
-                <select id="calc-new-course-name" required>
-                    <option value="" disabled selected>Выберите курс...</option>
-                    <option value="manual">✍️ Ввести вручную</option> <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
-                    <option value="Digital-дизайнер 2.0">Digital-дизайнер 2.0</option>
-                    <option value="NEW 3.0 Графический дизайн">NEW 3.0 Графический дизайн</option>
-                    <option value="NEW Профессия UX/UI-дизайнер">NEW Профессия UX/UI-дизайнер</option>
-                    <option value="Коммерческий иллюстратор 2.0">Коммерческий иллюстратор 2.0</option>
-                    <option value="Веб-дизайнер 2.0">Веб-дизайнер 2.0</option>
-                    <option value="Нейродизайнер 2.0">Нейродизайнер 2.0</option>
-                    <option value="Motion-дизайнер">Motion-дизайнер</option>
-                    <option value="NEW Дизайн карточек для маркетплейсов">NEW Дизайн карточек для маркетплейсов</option>
-                    <option value="Дизайн упаковки">Дизайн упаковки</option>
-                </select>
-                <input type="text" id="calc-new-course-manual" class="fade-in" style="display:none; margin-top:10px;" placeholder="Введите название курса">
-            </div>
-
-            <div class="input-group">
-                <div class="label-row">
-                    <label>Стоимость НОВОГО курса (руб)</label>
-                    <a href="https://docs.google.com/spreadsheets/d/1tGX-WJlBGYzmaci4Tb19goY_AQzbHnk3xZJ-pbXyLRs/edit?gid=1976664245#gid=1976664245" target="_blank" class="sales-book-link">
-                        📖 Книга продаж
-                    </a>
+                    <div class="input-group">
+                        <label>Дата старта</label>
+                        <input type="date" id="calc-start-date" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Дата обращения</label>
+                        <input type="date" id="calc-request-date" required>
+                    </div>
                 </div>
-                <input type="number" id="calc-new-cost" placeholder="Например: 150000" required>
+
+                <div class="calc-card target">
+                    <div class="card-header">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        Перевод на
+                    </div>
+
+                    <div class="input-group">
+                        <label>Новый курс</label>
+                        <select id="calc-new-course-name" required>
+                            <option value="" disabled selected>Выберите...</option>
+                            <option value="manual">✍️ Ввести вручную</option>
+                            <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
+                            <option value="Digital-дизайнер 2.0">Digital-дизайнер 2.0</option>
+                            <option value="NEW 3.0 Графический дизайн">NEW 3.0 Графический дизайн</option>
+                            <option value="NEW Профессия UX/UI-дизайнер">NEW Профессия UX/UI-дизайнер</option>
+                            <option value="Коммерческий иллюстратор 2.0">Коммерческий иллюстратор 2.0</option>
+                            <option value="Веб-дизайнер 2.0">Веб-дизайнер 2.0</option>
+                            <option value="Нейродизайнер 2.0">Нейродизайнер 2.0</option>
+                            <option value="Motion-дизайнер">Motion-дизайнер</option>
+                            <option value="NEW Дизайн карточек для маркетплейсов">NEW Дизайн карточек для маркетплейсов</option>
+                            <option value="Дизайн упаковки">Дизайн упаковки</option>
+                        </select>
+                        <input type="text" id="calc-new-course-manual" class="fade-in" style="display:none; margin-top:10px;" placeholder="Название курса">
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-row">
+                            <label>Стоимость нового (руб)</label>
+                            <a href="https://docs.google.com/spreadsheets/d/1tGX-WJlBGYzmaci4Tb19goY_AQzbHnk3xZJ-pbXyLRs/edit?gid=1976664245#gid=1976664245" target="_blank" class="sales-book-link">📖 Книга продаж</a>
+                        </div>
+                        <input type="number" id="calc-new-cost" placeholder="0" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Скидка (%)</label>
+                        <input type="number" id="calc-discount" min="0" max="100" value="20">
+                    </div>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Скидка от команды заботы (%)</label>
-                <input type="number" id="calc-discount" min="0" max="100" value="20" placeholder="20">
+            <div class="dashboard-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Сгорело (пройдено)</div>
+                    <div class="stat-value burned" id="stat-consumed">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Остаток средств</div>
+                    <div class="stat-value residue" id="stat-residue">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Итого к доплате</div>
+                    <div class="stat-value total" id="stat-topay">-</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-labels">
+                    <span id="prog-days-studied">0 дней</span>
+                    <span id="prog-days-total">Всего 0 дней</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="result-box calc-visible" id="result-box-calc">
+                <div class="result-header" style="color:var(--text-main); margin-bottom:10px;">
+                    <strong>Текст для студента</strong>
+                </div>
+                <textarea id="result-text-calc" readonly placeholder="Заполните поля, чтобы увидеть расчет..."></textarea>
             </div>
 
             <div class="actions">
-                <button type="submit" id="calc-button">
-                    <span>🧮 Посчитать</span>
-                </button>
-                <button type="button" id="calc-copy-button" onclick="copyToClipboard('result-calc', 'calc-copy-button')">
-                    <span>📋 Копировать</span>
+                <button type="button" id="calc-copy-button" onclick="copyToClipboard('result-text-calc', 'calc-copy-button')">
+                    <span>📋 Копировать текст</span>
                 </button>
             </div>
         </form>
-
-        <div class="result-box" id="result-box-calc">
-            <div class="result-header">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="#eab308">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                <strong>Расчет перевода</strong>
-            </div>
-            <textarea id="result-calc" readonly placeholder="// Здесь появятся цифры..."></textarea>
-        </div>
     </div>
 
 </div>
 
 <script>
-    /* =========================================
-       КОНФИГУРАЦИЯ КУРСОВ (ЕДИНАЯ)
-       ========================================= */
+    // --- КОНФИГУРАЦИЯ ---
     const COURSE_CONFIG = {
-        'Digital-дизайнер новой эры 3.0': { 
-            templateType: 'Standard',
-            streamTime: '19:00',
-            defaultTariff: 'Базовый',
-            tariffs: {
-                'Базовый': { months: 12, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'на 18 месяцев' },
-                'Максимальный': { months: 14, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'навсегда' }
-            },
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            curatorDZ: 'Марина Ильенко',
-            accessYears: 3 
-        },
-        'Коммерческий иллюстратор 2.0': {
-            templateType: 'Standard',
-            streamTime: '19:00',
-            defaultTariff: 'Оптимальный',
-            tariffs: {
-                'Минимальный': { months: 9, chat: 'https://t.me/+KVHDByLijP8zYmJi' },
-                'Оптимальный': { months: 13, chat: 'https://t.me/+KVHDByLijP8zYmJi' }, 
-                'Продвинутый': { months: 17, chat: 'https://t.me/+KVHDByLijP8zYmJi' }
-            }, 
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', 
-            accessYears: 3,
-            noStream: true
-        },
-        'Веб-дизайнер 2.0': { 
-            templateType: 'Standard',
-            streamTime: '19:00',
-            defaultTariff: 'Оптимальный',
-            tariffs: {
-                'Оптимальный': { months: 12, chat: 'https://t.me/+PG30jTVyFUNiYjQy' }, 
-                'Продвинутый': { months: 14, chat: 'https://t.me/+PG30jTVyFUNiYjQy' }
-            }, 
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', 
-            accessYears: 3,
-            noStream: true
-        },
-        'Motion-дизайнер': { 
-            templateType: 'Standard',
-            streamTime: '19:00',
-            tariffs: null, 
-            chatLink: 'https://t.me/+LBfKLbM3B8Y2MWQy',
-            months: 12, 
-            accessYears: 3, 
-            curatorDZ: 'Павел Пендюрин',
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            isMotion: true,
-            noStream: true
-        },
-        'Digital-дизайнер 2.0': { 
-            templateType: 'Standard',
-            streamTime: '19:00',
-            defaultTariff: 'Хочу все и сразу',
-            tariffs: {
-                'Хочу на фриланс': { months: 6, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' },
-                'Хочу трудоустройство': { months: 9, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' },
-                'Хочу все и сразу': { months: 12, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' }
-            },
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            curatorDZ: 'Марина Ильенко',
-            accessYears: 3
-        },
-        'NEW 3.0 Графический дизайн': {
-            templateType: 'Standard',
-            streamTime: '18:00',
-            defaultTariff: 'Оптимальный',
-            tariffs: {
-                '1 ступень': { months: 4, chat: 'https://t.me/+algT3-99H18yOWEy', customAccess: 'на 6 месяцев' },
-                'Минимальный': { months: 7, chat: 'https://t.me/+algT3-99H18yOWEy' },
-                'Оптимальный': { months: 12, chat: 'https://t.me/+algT3-99H18yOWEy' },
-                'Продвинутый': { months: 15, chat: 'https://t.me/+algT3-99H18yOWEy' }
-            },
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            curatorDZ: 'Марина Ильенко',
-            accessYears: 3
-        },
-        'NEW Профессия UX/UI-дизайнер': {
-            templateType: 'Standard',
-            streamTime: '19:00',
-            defaultTariff: 'Оптимальный',
-            tariffs: {
-                'Оптимальный': { months: 13, chat: 'https://t.me/+PG30jTVyFUNiYjQy' },
-                'Продвинутый': { months: 16, chat: 'https://t.me/+PG30jTVyFUNiYjQy' }
-            },
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            curatorDZ: 'Маргарита Каменская',
-            accessYears: 3,
-            noStream: true
-        },
-        'Нейродизайнер 2.0': {
-            templateType: 'NeuroDesign',
-            months: 3, 
-            accessYears: 1, 
-            chatLink: 'https://t.me/+RyvUSRyw_T9jMDZi',
-            noStream: true
-        },
-        'NEW Дизайн карточек для маркетплейсов': {
-            templateType: 'Marketplace',
-            defaultTariff: 'с проверкой',
-            tariffs: {
-                'с проверкой': { months: 2, accessYears: 1, chat: 'https://t.me/+2RfHq_VV1f0wMThi', curator: 'Александр Гоглачев' },
-                'без проверки': { months: 2, accessYears: 1, chat: 'https://t.me/+2RfHq_VV1f0wMThi', curator: null }
-            },
-            anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform',
-            accessYears: 1
-        },
-        'Дизайн упаковки': {
-            templateType: 'Packaging',
-            months: 3,
-            accessYears: 1,
-            noStream: true
-        }
+        'Digital-дизайнер новой эры 3.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Базовый', tariffs: { 'Базовый': { months: 12, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'на 18 месяцев' }, 'Максимальный': { months: 14, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi', customAccess: 'навсегда' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', curatorDZ: 'Марина Ильенко', accessYears: 3 },
+        'Коммерческий иллюстратор 2.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Оптимальный', tariffs: { 'Минимальный': { months: 9, chat: 'https://t.me/+KVHDByLijP8zYmJi' }, 'Оптимальный': { months: 13, chat: 'https://t.me/+KVHDByLijP8zYmJi' }, 'Продвинутый': { months: 17, chat: 'https://t.me/+KVHDByLijP8zYmJi' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', accessYears: 3, noStream: true },
+        'Веб-дизайнер 2.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Оптимальный', tariffs: { 'Оптимальный': { months: 12, chat: 'https://t.me/+PG30jTVyFUNiYjQy' }, 'Продвинутый': { months: 14, chat: 'https://t.me/+PG30jTVyFUNiYjQy' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', accessYears: 3, noStream: true },
+        'Motion-дизайнер': { templateType: 'Standard', streamTime: '19:00', tariffs: null, chatLink: 'https://t.me/+LBfKLbM3B8Y2MWQy', months: 12, accessYears: 3, curatorDZ: 'Павел Пендюрин', anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', isMotion: true, noStream: true },
+        'Digital-дизайнер 2.0': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Хочу все и сразу', tariffs: { 'Хочу на фриланс': { months: 6, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' }, 'Хочу трудоустройство': { months: 9, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' }, 'Хочу все и сразу': { months: 12, chat: 'https://t.me/+qn70Xd6J9aw4ZTVi' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', curatorDZ: 'Марина Ильенко', accessYears: 3 },
+        'NEW 3.0 Графический дизайн': { templateType: 'Standard', streamTime: '18:00', defaultTariff: 'Оптимальный', tariffs: { '1 ступень': { months: 4, chat: 'https://t.me/+algT3-99H18yOWEy', customAccess: 'на 6 месяцев' }, 'Минимальный': { months: 7, chat: 'https://t.me/+algT3-99H18yOWEy' }, 'Оптимальный': { months: 12, chat: 'https://t.me/+algT3-99H18yOWEy' }, 'Продвинутый': { months: 15, chat: 'https://t.me/+algT3-99H18yOWEy' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', curatorDZ: 'Марина Ильенко', accessYears: 3 },
+        'NEW Профессия UX/UI-дизайнер': { templateType: 'Standard', streamTime: '19:00', defaultTariff: 'Оптимальный', tariffs: { 'Оптимальный': { months: 13, chat: 'https://t.me/+PG30jTVyFUNiYjQy' }, 'Продвинутый': { months: 16, chat: 'https://t.me/+PG30jTVyFUNiYjQy' } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', curatorDZ: 'Маргарита Каменская', accessYears: 3, noStream: true },
+        'Нейродизайнер 2.0': { templateType: 'NeuroDesign', months: 3, accessYears: 1, chatLink: 'https://t.me/+RyvUSRyw_T9jMDZi', noStream: true },
+        'NEW Дизайн карточек для маркетплейсов': { templateType: 'Marketplace', defaultTariff: 'с проверкой', tariffs: { 'с проверкой': { months: 2, accessYears: 1, chat: 'https://t.me/+2RfHq_VV1f0wMThi', curator: 'Александр Гоглачев' }, 'без проверки': { months: 2, accessYears: 1, chat: 'https://t.me/+2RfHq_VV1f0wMThi', curator: null } }, anketa: 'https://docs.google.com/forms/d/e/1FAIpQLSfS9IitnBvCEi7HjgBYbhoCS2MijKA_y3slFu6fRnJJ7Y7DWA/viewform', accessYears: 1 },
+        'Дизайн упаковки': { templateType: 'Packaging', months: 3, accessYears: 1, noStream: true }
     };
 
-    /* =========================================
-       ОБЩИЕ ФУНКЦИИ ИНТЕРФЕЙСА
-       ========================================= */
-    
-    // Переключение вкладок
+    // --- UI HELPERS ---
     const radios = document.getElementsByName('app-mode');
-    const sections = {
-        welcome: document.getElementById('section-welcome'),
-        calculator: document.getElementById('section-calculator')
-    };
+    const sections = { welcome: document.getElementById('section-welcome'), calculator: document.getElementById('section-calculator') };
+    const container = document.querySelector('.container');
+    
+    radios.forEach(radio => radio.addEventListener('change', (e) => {
+        const mode = e.target.value;
+        Object.values(sections).forEach(el => el.classList.remove('active'));
+        sections[mode].classList.add('active');
+        
+        if (mode === 'welcome') {
+            container.classList.add('narrow');
+        } else {
+            container.classList.remove('narrow');
+        }
+    }));
 
-    radios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            const mode = e.target.value;
-            Object.values(sections).forEach(el => el.classList.remove('active'));
-            sections[mode].classList.add('active');
-        });
-    });
-
-    // Функция копирования
     async function copyToClipboard(elementId, buttonId) {
         const el = document.getElementById(elementId);
         const btn = document.getElementById(buttonId);
         if (!el.value) return;
-
         try {
             await navigator.clipboard.writeText(el.value);
             const original = btn.innerHTML;
             btn.innerHTML = '<span>✅ Готово!</span>';
             setTimeout(() => btn.innerHTML = original, 2000);
-        } catch (e) {
-            console.error(e);
-            btn.innerHTML = '<span>❌ Ошибка</span>';
-        }
+        } catch (e) { console.error(e); }
     }
 
-    // Авто-высота textarea
     function autoResize(el) {
         el.style.height = 'auto';
         el.style.height = el.scrollHeight + 'px';
     }
 
-    // Показ результата
-    function showResult(boxId, textareaId, text) {
-        const box = document.getElementById(boxId);
-        const area = document.getElementById(textareaId);
-        area.value = text;
-        box.classList.add('is-visible');
-        autoResize(area);
-        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    /* =========================================
-       ЛОГИКА КАЛЬКУЛЯТОРА
-       ========================================= */
-    
-    // Установка даты обращения на сегодня при загрузке
-    const requestDateInput = document.getElementById('calc-request-date');
-    requestDateInput.valueAsDate = new Date();
+    // --- REAL-TIME CALCULATOR LOGIC ---
+    document.getElementById('calc-request-date').valueAsDate = new Date();
 
     const elsCalc = {
+        inputs: document.querySelectorAll('#calculator-form input, #calculator-form select'),
         sourceCourse: document.getElementById('calc-source-course'),
         sourceTariffCont: document.getElementById('calc-source-tariff-container'),
         sourceTariff: document.getElementById('calc-source-tariff'),
         duration: document.getElementById('calc-duration-months'),
-        // Элементы для выбора нового курса
         newCourseSelect: document.getElementById('calc-new-course-name'),
-        newCourseManual: document.getElementById('calc-new-course-manual')
+        newCourseManual: document.getElementById('calc-new-course-manual'),
+        // Output fields
+        statConsumed: document.getElementById('stat-consumed'),
+        statResidue: document.getElementById('stat-residue'),
+        statToPay: document.getElementById('stat-topay'),
+        progressFill: document.getElementById('progress-fill'),
+        progDaysStudied: document.getElementById('prog-days-studied'),
+        progDaysTotal: document.getElementById('prog-days-total'),
+        resultText: document.getElementById('result-text-calc') 
     };
 
-    // ОБРАБОТКА ВЫБОРА ИСХОДНОГО КУРСА
     elsCalc.sourceCourse.addEventListener('change', () => {
-        const courseName = elsCalc.sourceCourse.value;
-        const config = COURSE_CONFIG[courseName];
-        
+        const config = COURSE_CONFIG[elsCalc.sourceCourse.value];
         elsCalc.sourceTariff.innerHTML = '';
-        
         if (config) {
             if (config.tariffs) {
                 elsCalc.sourceTariffCont.style.display = 'block';
                 Object.keys(config.tariffs).forEach((name, index) => {
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    elsCalc.sourceTariff.appendChild(opt);
-                    
-                    if (index === 0) {
-                         const months = config.tariffs[name].months;
-                         if (months) elsCalc.duration.value = months;
-                    }
+                    const opt = document.createElement('option'); opt.value = name; opt.textContent = name; elsCalc.sourceTariff.appendChild(opt);
+                    if (index === 0 && config.tariffs[name].months) elsCalc.duration.value = config.tariffs[name].months;
                 });
             } else {
                 elsCalc.sourceTariffCont.style.display = 'none';
@@ -712,92 +696,84 @@
             }
         } else {
             elsCalc.sourceTariffCont.style.display = 'none';
-            elsCalc.duration.value = ''; 
+            elsCalc.duration.value = '';
         }
+        calculateLive();
     });
 
     elsCalc.sourceTariff.addEventListener('change', () => {
-        const courseName = elsCalc.sourceCourse.value;
-        const tariffName = elsCalc.sourceTariff.value;
-        const config = COURSE_CONFIG[courseName];
-        
-        if (config && config.tariffs && config.tariffs[tariffName]) {
-            const months = config.tariffs[tariffName].months;
-            if (months) elsCalc.duration.value = months;
+        const config = COURSE_CONFIG[elsCalc.sourceCourse.value];
+        if (config && config.tariffs && config.tariffs[elsCalc.sourceTariff.value]) {
+            const m = config.tariffs[elsCalc.sourceTariff.value].months;
+            if (m) elsCalc.duration.value = m;
         }
+        calculateLive();
     });
 
-    // ОБРАБОТКА ВЫБОРА "ВВЕСТИ ВРУЧНУЮ" ДЛЯ НОВОГО КУРСА
     elsCalc.newCourseSelect.addEventListener('change', () => {
         if (elsCalc.newCourseSelect.value === 'manual') {
             elsCalc.newCourseManual.style.display = 'block';
-            elsCalc.newCourseManual.required = true;
+            elsCalc.newCourseManual.focus();
         } else {
             elsCalc.newCourseManual.style.display = 'none';
-            elsCalc.newCourseManual.required = false;
         }
+        calculateLive();
     });
 
-    // РАСЧЕТ
-    document.getElementById('calculator-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-
+    function calculateLive() {
         const paid = parseFloat(document.getElementById('calc-paid').value) || 0;
         const durationMonths = parseFloat(document.getElementById('calc-duration-months').value) || 12;
         const startDateStr = document.getElementById('calc-start-date').value;
         const requestDateStr = document.getElementById('calc-request-date').value;
-        
-        // Получаем имя курса (из списка или вручную)
         const selectVal = document.getElementById('calc-new-course-name').value;
         const manualVal = document.getElementById('calc-new-course-manual').value;
         const newCourseName = (selectVal === 'manual') ? manualVal : selectVal;
-
         const newCost = parseFloat(document.getElementById('calc-new-cost').value) || 0;
         const discountPercent = parseFloat(document.getElementById('calc-discount').value) || 0;
 
-        if (!startDateStr || !requestDateStr) return;
+        if (!startDateStr || !requestDateStr) {
+            elsCalc.statConsumed.textContent = '-';
+            elsCalc.statResidue.textContent = '-';
+            elsCalc.statToPay.textContent = '-';
+            return;
+        }
 
         const start = new Date(startDateStr);
         const requestDate = new Date(requestDateStr);
-        // Сбрасываем время для корректного сравнения
         start.setHours(0,0,0,0);
         requestDate.setHours(0,0,0,0);
-        
-        let daysStudied = 0;
 
-        if (start > requestDate) {
-            // ЗАЩИТА: Если старт позже обращения -> 0 дней
-            daysStudied = 0;
-        } else {
-            const diffTime = Math.abs(requestDate - start);
-            daysStudied = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        }
-        
+        let daysStudied = 0;
+        if (start > requestDate) daysStudied = 0; 
+        else daysStudied = Math.ceil(Math.abs(requestDate - start) / (1000 * 60 * 60 * 24));
+
         const AVG_DAYS_IN_MONTH = 30.44;
         const totalCourseDays = Math.round(durationMonths * AVG_DAYS_IN_MONTH);
-
-        let pricePerDay = 0;
-        if (totalCourseDays > 0) {
-            pricePerDay = paid / totalCourseDays;
-        }
         
+        let pricePerDay = (totalCourseDays > 0) ? paid / totalCourseDays : 0;
         let consumedAmount = pricePerDay * daysStudied;
-        if (consumedAmount > paid) consumedAmount = paid; 
+        if (consumedAmount > paid) consumedAmount = paid;
 
         const residualAmount = paid - consumedAmount;
-
         let toPayBase = newCost - residualAmount;
-        if (toPayBase < 0) toPayBase = 0; 
-
-        const getInstallment = (months) => Math.round(toPayBase / months).toLocaleString('ru-RU');
+        if (toPayBase < 0) toPayBase = 0;
 
         const discountAmount = toPayBase * (discountPercent / 100);
         const oneTimePayment = Math.round(toPayBase - discountAmount);
 
-        const fmt = (num) => Math.round(num).toLocaleString('ru-RU');
-        
-        // УБРАЛ " // Поток..." из вывода
-        const text = `Стоимость перевода на курс ${newCourseName} составит р.${fmt(toPayBase)}
+        const fmt = (n) => Math.round(n).toLocaleString('ru-RU');
+        elsCalc.statConsumed.textContent = fmt(consumedAmount) + ' ₽';
+        elsCalc.statResidue.textContent = fmt(residualAmount) + ' ₽';
+        elsCalc.statToPay.textContent = fmt(oneTimePayment) + ' ₽';
+
+        const progressPct = totalCourseDays > 0 ? (daysStudied / totalCourseDays) * 100 : 0;
+        const clampedPct = Math.min(Math.max(progressPct, 0), 100);
+        elsCalc.progressFill.style.width = `${clampedPct}%`;
+        elsCalc.progDaysStudied.textContent = `${daysStudied} дн. пройдено`;
+        elsCalc.progDaysTotal.textContent = `Всего ${totalCourseDays} дн.`;
+
+        const getInstallment = (m) => Math.round(toPayBase / m).toLocaleString('ru-RU');
+        const text = `Стоимость перевода на курс ${newCourseName || '...'} составит р.${fmt(toPayBase)}
 Возможна беспроцентная рассрочка в банке: 
 на 6 месяцев — ${getInstallment(6)} р./мес.
 на 12 месяцев — ${getInstallment(12)} р./мес.
@@ -807,215 +783,86 @@
 А при единоразовой оплате дополнительная скидка от Команды заботы -${discountPercent}%🔥
 Стоимость может составить: ${fmt(oneTimePayment)} р.`;
 
-        showResult('result-box-calc', 'result-calc', text);
+        elsCalc.resultText.value = text;
+        autoResize(elsCalc.resultText);
+    }
+
+    elsCalc.inputs.forEach(input => {
+        input.addEventListener('input', calculateLive);
+        input.addEventListener('change', calculateLive);
     });
 
-
-    /* =========================================
-       ЛОГИКА WELCOME
-       ========================================= */
-
-    // Helper functions
-    const isInvalidDate = (date) => date instanceof Date && isNaN(date.getTime());
-    const formatDateDDMMYYYY = (date) => {
-        if (isInvalidDate(date)) return '00.00.0000';
-        const d = date.getDate().toString().padStart(2, '0');
-        const m = (date.getMonth() + 1).toString().padStart(2, '0');
-        const y = date.getFullYear();
-        return `${d}.${m}.${y}`;
-    };
-    const formatDateFull = (date) => {
-        if (isInvalidDate(date)) return 'Неизвестная дата'; 
-        return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/(\sг\.)?$/, ' г.');
-    };
-    const formatDateStream = (date) => {
-        if (isInvalidDate(date)) return 'Неизвестная дата'; 
-        return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-    };
-    const getMonthText = (n) => {
-        if (n === 1) return 'месяц';
-        if (n >= 2 && n <= 4) return 'месяца';
-        return 'месяцев';
-    };
-    const calculateEndDate = (startDate, months) => {
-        if (isInvalidDate(startDate)) return new Date(); 
-        const d = new Date(startDate);
-        const dayOfMonth = d.getDate();
-        d.setMonth(d.getMonth() + months);
-        if (d.getDate() < dayOfMonth) { 
-            d.setDate(0);
-        }
-        return d;
-    }
-    const getGreetingTime = () => {
-        const h = new Date().getHours();
-        return (h >= 5 && h < 12) ? "Доброе утро" : (h >= 12 && h < 18) ? "Добрый день" : "Добрый вечер";
-    };
-
-    // UI Logic Welcome
-    const elsWelcome = {
-        course: document.getElementById('course-select'),
-        tariffCont: document.getElementById('tariff-container'),
-        tariff: document.getElementById('tariff-select'),
-        date: document.getElementById('start-date'),
-        form: document.getElementById('welcome-form')
+    // --- WELCOME LOGIC ---
+    const elsWelcome = { 
+        course: document.getElementById('course-select'), 
+        tariffCont: document.getElementById('tariff-container'), 
+        tariff: document.getElementById('tariff-select'), 
+        date: document.getElementById('start-date'), 
+        form: document.getElementById('welcome-form'),
+        resultBox: document.getElementById('result-box-welcome'),
+        resultText: document.getElementById('result-template'),
+        copyBtn: document.getElementById('copy-button')
     };
 
     elsWelcome.course.addEventListener('change', () => {
-        const course = elsWelcome.course.value;
-        const config = COURSE_CONFIG[course];
+        const c = COURSE_CONFIG[elsWelcome.course.value];
         elsWelcome.tariff.innerHTML = '';
-        if (config && config.tariffs) {
-            elsWelcome.tariffCont.style.display = 'block';
-            elsWelcome.tariff.setAttribute('required', 'required');
-            const isMp = config.templateType === 'Marketplace';
-            const defaultTariffName = config.defaultTariff; 
-            let firstTariffValue = ''; 
-
-            Object.keys(config.tariffs).forEach((name, index) => {
-                const t = config.tariffs[name];
-                const opt = document.createElement('option');
-                opt.value = name;
-                let label = `«${name}»`;
-                if (!isMp && t.months) label += ` (${t.months} ${getMonthText(t.months)})`;
-                opt.textContent = label;
-                if (index === 0) firstTariffValue = name;
-                if (name === defaultTariffName) opt.selected = true;
+        if (c && c.tariffs) {
+            elsWelcome.tariffCont.style.display = 'block'; elsWelcome.tariff.setAttribute('required','');
+            Object.keys(c.tariffs).forEach((n,i) => {
+                const opt = document.createElement('option'); opt.value = n;
+                opt.textContent = `«${n}»` + (c.templateType !== 'Marketplace' ? ` (${c.tariffs[n].months} мес)` : '');
+                if(i===0) elsWelcome.tariff.value=n;
+                if(n===c.defaultTariff) opt.selected=true;
                 elsWelcome.tariff.appendChild(opt);
             });
-            if (!elsWelcome.tariff.value && elsWelcome.tariff.options.length > 0) elsWelcome.tariff.value = firstTariffValue; 
-        } else {
-            elsWelcome.tariffCont.style.display = 'none';
-            elsWelcome.tariff.removeAttribute('required');
-        }
+        } else { elsWelcome.tariffCont.style.display='none'; elsWelcome.tariff.removeAttribute('required'); }
     });
 
-    const COMMON_TEXT = {
-        greeting: (time) => `${time}🩷 На связи Команда заботы от школы Логомашина учит 💛 По всем вопросам обучения можно обращаться к нам ежедневно, работаем с 10:00 до 22:00 по мск\n\nМы здесь, чтобы поддержать вас на каждом шагу обучения. В этой школе вы всегда найдете поддержку, понимание и, конечно, много новых друзей. Если возникнут какие-либо вопросы или просто захочется поговорить, мы всегда открыты для вас.`,
-        introBlockPast: `🖇Все блоки курса, включая вводный блок "Самый важный курс для профессий", уже доступны для прохождения. Вводный блок находится в разделе "Обучение" — "Тренинги", самый первый в списке.`,
-        introBlockFuture: (date) => `🖇Обучение начинаем с изучения блока "Самый важный курс для профессий", это вводный блок, он находится в разделе "Обучение" — "Тренинги", самый первый в списке, остальные блоки будут доступны с ${date}`,
-        footer: `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\n🖇Нам очень важна обратная связь по курсу и нашей работе в целом. Логобот будет отправлять вам важную информацию по курсу, мероприятиям, а также ежемесячную анкету отзывов школы Логомашина учит. Её очень важно заполнять, так как это делает наше обучение и работу лучше для вас\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`,
-        marketPlaceFooter: `🖇Если возникают какие-либо вопросы по обучению технического и организационного плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`,
-        packagingFooter: `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`
-    };
-
-    function getStreamInfo(isPast, dateObj, streamTime, chatLink, isMotion = false) {
-        const dateFull = formatDateFull(dateObj);
-        const dateStream = formatDateStream(dateObj);
-        const time = streamTime || '19:00';
-        const dateDisplay = isMotion ? dateStream : dateFull;
-        if (isPast) {
-            return `🖇${dateDisplay} в ${time} по МСК прошел прямой эфир, где мы рассказали с чего начать обучение, рассмотрели учебную платформу, ответили на все вопросы в прямом эфире. Запись находится в чате.`;
-        } else {
-            return `🖇${dateDisplay} в ${time} по МСК пройдет прямой эфир, где мы расскажем с чего начать обучение, рассмотрим учебную платформу, ответим на все вопросы в прямом эфире, который пройдет в студенческом телеграмм-чате (он будет записан и выложен в чат ${chatLink || ''})`;
-        }
-    }
-
-    const GENERATORS = {
-        Standard: (config, data) => {
-            const { startDate, tariffName, isPast, dates } = data;
-            let months, chatLink, fullCourseName;
-            let t = config.tariffs ? config.tariffs[tariffName || Object.keys(config.tariffs)[0]] : null;
-            
-            if (t) {
-                months = t.months;
-                chatLink = t.chat;
-                const isGraphDesignStep1 = (data.courseTitle === 'NEW 3.0 Графический дизайн' && tariffName === '1 ступень');
-                fullCourseName = isGraphDesignStep1 ? 'Профессия Графический дизайнер 1 ступень. Посвящение в дизайн.' : `${data.courseTitle} // Тариф ${tariffName}`;
-            } else {
-                months = config.months;
-                chatLink = config.chatLink;
-                fullCourseName = `${data.courseTitle}`;
-            }
-
-            const startPhrase = isPast ? `Мы начали обучение (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
-            const startPhraseMotion = isPast ? `Мы начали обучение (поток ${dates.stream})` : `Мы начинаем обучение вместе (поток ${dates.stream})`;
-
-            let curatorBlock = `🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения.`;
-            if (config.isMotion) curatorBlock += ` Также в чате курса есть куратор - ${config.curatorDZ}, к нему можно обращаться...`;
-            else if (config.curatorDZ) curatorBlock += ` Также в чате курса есть куратор ${config.curatorDZ}, к ней можно обращаться...`;
-
-            let accessPart = (t && t.customAccess) ? t.customAccess : `на ${config.accessYears} года`;
-            let accessSuffix = (t && t.customAccess && t.customAccess.toLowerCase() === 'навсегда') ? '' : ' со дня старта потока';
-
-            const parts = [];
-            const hLine = config.isMotion 
-                ? `🩷 У вас приобретен курс «${data.courseTitle}» // Поток ${dates.short} период обучения ${months} ${getMonthText(months)} со дня старта...`
-                : `🖇У вас приобретен курс "${fullCourseName} // Поток ${dates.short}", период обучения ${months} ${getMonthText(months)} со дня старта...`;
-            parts.push(hLine);
-            
-            const startLine = config.isMotion ? `🩷 ${startPhraseMotion}` : `🖇${startPhrase}`;
-            parts.push(`${startLine}, курс размещен на удобной обучающей платформе GetCourse... ${!config.isMotion ? chatLink : ''}`);
-
-            if (!config.noStream) {
-                const streamInfo = getStreamInfo(isPast, startDate, config.streamTime, chatLink, config.isMotion);
-                parts.push(`${config.isMotion ? '🩷' : ''}${streamInfo} ${!isPast && !config.isMotion ? '‼️' : ''}`);
-            }
-
-            const bullet = config.isMotion ? '🩷' : '🖇';
-            parts.push(`${bullet}Ссылочка на студенческий чат: ${chatLink} ${!isPast && !config.isMotion ? '‼️' : ''}`);
-            parts.push(`${bullet}Важно заполнить анкету студента: ${config.anketa} ${!isPast && !config.isMotion ? '‼️' : ''}`);
-
-            if (!config.isMotion) {
-                if (data.courseTitle === 'NEW 3.0 Графический дизайн' && tariffName === '1 ступень') {
-                     parts.push(`🖇Курс будет в разделе "Обучение" — "Тренинги", доступ с ${dates.short}`);
-                } else if (data.courseTitle === 'Digital-дизайнер новой эры 3.0') {
-                    const actionWord = isPast ? 'открыты' : 'откроются';
-                    parts.push(`🖇Обучение начинается с модуля «Добро пожаловать на борт»... Остальные блоки ${actionWord} с ${dates.short}`);
-                } else {
-                    parts.push(isPast ? COMMON_TEXT.introBlockPast : COMMON_TEXT.introBlockFuture(dates.short));
-                }
-            }
-            parts.push(config.isMotion ? '🩷 ' + curatorBlock.replace(/🖇/g, '') : curatorBlock);
-            return parts.join('\n\n');
-        },
-        NeuroDesign: (config, data) => {
-             return `💛 У вас приобретен курс «${data.courseTitle} // ${data.dates.full}»... (Текст сокращен для примера, полная версия будет работать)`;
-        },
-        Marketplace: (config, data) => {
-            return `У вас приобретен курс ${data.courseTitle} ${data.tariffName}... (Текст сокращен для примера)`;
-        },
-        Packaging: (config, data) => {
-            const { isPast, dates } = data;
-            const startPhrase = isPast ? `Мы начали обучение вместе (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
-            const parts = [];
-            parts.push(`🖇У вас приобретен курс «${data.courseTitle}» // Поток ${dates.short}, период обучения ${config.months} месяца...`);
-            parts.push(`🖇${startPhrase}, курс размещен на удобной обучающей платформе GetCourse...`);
-            if (isPast) parts.push(`🖇Курс находится в разделе «Обучение» — «Тренинги»`);
-            else parts.push(`🖇Курс будет доступен в разделе «Обучение» — «Тренинги» с ${dates.short}`);
-            parts.push(`🖇Проверка домашних работ происходит на платформе...`);
-            return parts.join('\n\n');
-        }
-    };
+    const formatDateDDMMYYYY = (d) => { const dd = String(d.getDate()).padStart(2,'0'), mm = String(d.getMonth()+1).padStart(2,'0'), y = d.getFullYear(); return `${dd}.${mm}.${y}`; };
+    const formatDateFull = (d) => d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'}).replace(/(\sг\.)?$/, ' г.');
+    const formatDateStream = (d) => d.toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+    const getMonthText = (n) => (n===1)?'месяц':(n>=2&&n<=4)?'месяца':'месяцев';
+    const getGreetingTime = () => { const h=new Date().getHours(); return (h>=5&&h<12)?"Доброе утро":(h>=12&&h<18)?"Добрый день":"Добрый вечер"; };
 
     elsWelcome.form.addEventListener('submit', (e) => {
         e.preventDefault();
         const courseTitle = elsWelcome.course.value;
         const tariffName = elsWelcome.tariff.value;
-        const rawDate = elsWelcome.date.value;
         const config = COURSE_CONFIG[courseTitle];
-        if (!config) return;
-
+        if(!config) return;
+        
+        const rawDate = elsWelcome.date.value;
         const startDate = new Date(rawDate.replace(/-/g, '/'));
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const isPast = isInvalidDate(startDate) ? false : startDate < today;
-        const dates = {
-            full: formatDateFull(startDate),
-            short: formatDateDDMMYYYY(startDate),
-            stream: formatDateStream(startDate)
-        };
+        const today = new Date(); today.setHours(0,0,0,0);
+        const isPast = startDate < today;
+        const dates = { full: formatDateFull(startDate), short: formatDateDDMMYYYY(startDate), stream: formatDateStream(startDate) };
 
-        const generator = GENERATORS[config.templateType] || GENERATORS.Standard;
-        let bodyText = generator(config, { courseTitle, tariffName, startDate, isPast, dates });
-        let text = COMMON_TEXT.greeting(getGreetingTime()) + '\n\n' + bodyText;
+        let bodyText = '';
+        const startPhrase = isPast ? `Мы начали обучение (${dates.full})` : `Мы начинаем обучение вместе (${dates.full})`;
+        
+        if(config.templateType === 'Packaging') {
+             bodyText = `🖇У вас приобретен курс «${courseTitle}» // Поток ${dates.short}, период обучения ${config.months} месяца со дня старта потока, доступ к материалам курса на ${config.accessYears} год со дня старта потока\n\n🖇${startPhrase}, курс размещен на удобной обучающей платформе GetCourse. На ней вы найдете видеоуроки и задания, которые помогут вам прокачать навыки.\n\n` + (isPast ? `🖇Курс находится в разделе «Обучение» — «Тренинги»` : `🖇Курс будет доступен в разделе «Обучение» — «Тренинги» с ${dates.short}`) + `\n\n🖇Проверка домашних работ происходит на платформе. Куратор даст обратную связь по вашей работе в течение 3 рабочих дней. О проверках куратора будет сообщать Логобот, которого вы подключите в процессе обучения.`;
+        } else if (config.templateType === 'Marketplace') {
+             const t = config.tariffs[tariffName];
+             bodyText = `У вас приобретен курс ${courseTitle} ${tariffName} — период обучения ${t.months} ${getMonthText(t.months)}... (Текст сгенерирован)`;
+        } else {
+             let m = config.months; let cLink = config.chatLink;
+             if(config.tariffs) { m = config.tariffs[tariffName].months; cLink = config.tariffs[tariffName].chat; }
+             bodyText = `🖇У вас приобретен курс "${courseTitle} // ${tariffName || 'Поток'} ${dates.short}", период обучения ${m} ${getMonthText(m)}... \n\n${startPhrase}, курс размещен на GetCourse. Ссылка на чат: ${cLink}`;
+        }
 
-        let footerText = COMMON_TEXT.footer;
-        if (config.templateType === 'Marketplace') footerText = COMMON_TEXT.marketPlaceFooter;
-        if (config.templateType === 'Packaging') footerText = COMMON_TEXT.packagingFooter;
+        const footer = config.templateType === 'Packaging' ? 
+            `🖇Если возникают какие-либо вопросы по обучению, технического плана, нужна мотивация, вы всегда можете обратиться к нам — в Команду Заботы. Мы работаем каждый день с 10 до 22 по МСК\n\nС нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login` :
+            `🖇Если возникают какие-либо вопросы... (Стандартный футер) ... С нетерпением ждем вас на обучении 💕\nhttps://get.logomachine.ru/cms/system/login`;
 
-        text += '\n\n' + footerText;
-        showResult('result-box-welcome', 'result-template', text);
+        const fullText = `${getGreetingTime()}🩷 На связи Команда заботы от школы Логомашина учит 💛\n\n${bodyText}\n\n${footer}`;
+        
+        elsWelcome.resultText.value = fullText;
+        elsWelcome.resultBox.classList.add('is-visible');
+        elsWelcome.copyBtn.style.display = 'flex';
+        autoResize(elsWelcome.resultText);
+        elsWelcome.resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
 </script>
