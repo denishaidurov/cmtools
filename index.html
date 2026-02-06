@@ -76,22 +76,17 @@
 
         /* --- КАЛЬКУЛЯТОР --- */
         .calc-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; /* Добавил gap чтобы поля не слипались */
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-color);
             border-radius: 20px; position: relative;
         }
-        
-        /* Разделитель по центру */
         .calc-grid::before {
             content: ''; position: absolute; top: 30px; bottom: 30px; left: 50%; width: 1px; background: var(--border-color); transform: translateX(-50%); z-index: 1; opacity: 0.5;
         }
-        
-        /* Кружок со стрелкой */
         .calc-grid::after {
             content: '→'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ec4899; font-weight: 800; font-size: 1.2rem; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        
         .calc-card { padding: 35px; border: none; background: transparent; }
         .card-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: var(--text-muted); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; opacity: 0.9; }
         .calc-card.target .card-header { color: #ec4899; opacity: 1; }
@@ -104,25 +99,21 @@
 
         .input-group { margin-bottom: 20px; position: relative; }
         
-        /* УНИФИКАЦИЯ ЗАГОЛОВКОВ ПОЛЕЙ */
         .label-row {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px; /* Единый отступ */
-            min-height: 22px; /* Фиксированная высота шапки поля, чтобы выровнять строки */
+            margin-bottom: 8px; min-height: 22px; 
         }
         
         label {
-            display: block; margin-bottom: 0; /* Убираем margin у label, т.к. он теперь внутри label-row */
+            display: block; margin-bottom: 0;
             color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
         }
 
-        /* ЕДИНЫЙ СТИЛЬ ДЛЯ INPUT И SELECT */
         input, select, textarea { 
             width: 100%; background-color: var(--input-bg); 
             border: 1px solid transparent; color: var(--text-main); 
-            padding: 0 18px; /* Padding только по бокам */
-            height: 50px; /* Фиксированная высота для идеального выравнивания */
-            line-height: 50px;
+            padding: 0 18px; 
+            height: 50px; line-height: 50px;
             border-radius: 12px; font-size: 0.95rem; 
             box-sizing: border-box; font-family: inherit; transition: all 0.2s; 
         }
@@ -140,7 +131,7 @@
         .fade-in { animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- НОВЫЙ ДВУХПАНЕЛЬНЫЙ POPUP --- */
+        /* --- POPUP (2 КОЛОНКИ) --- */
         .custom-popup {
             position: absolute; top: 100%; right: 0; left: 0;
             background: #1e293b; border: 1px solid var(--border-color);
@@ -608,6 +599,18 @@
             parts.push(`🖇Проверка домашних работ...`);
             return parts.join('\n\n');
         }
+    };
+
+    // --- RESTORED WELCOME VARIABLES ---
+    const elsWelcome = {
+        course: document.getElementById('course-select'),
+        tariffCont: document.getElementById('tariff-container'),
+        tariff: document.getElementById('tariff-select'),
+        date: document.getElementById('start-date'),
+        form: document.getElementById('welcome-form'),
+        resultBox: document.getElementById('result-box-welcome'),
+        resultText: document.getElementById('result-template'),
+        copyBtn: document.getElementById('copy-button')
     };
 
     // --- WELCOME EVENTS ---
