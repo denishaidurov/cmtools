@@ -61,7 +61,7 @@
             border-radius: 24px 24px 0 0;
         }
 
-        /* --- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ (WELCOME / CALCULATOR) --- */
+        /* --- ПЕРЕКЛЮЧАТЕЛЬ --- */
         .mode-switcher-container { display: flex; justify-content: center; margin-bottom: 30px; }
         .mode-switcher { background-color: var(--input-bg); padding: 5px; border-radius: 50px; display: flex; gap: 5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         .mode-switcher input[type="radio"] { display: none; }
@@ -138,7 +138,7 @@
             overflow-y: hidden;
         }
 
-        /* Убираем мигание фона при клике */
+        /* Убираем мигание фона */
         textarea#result-template:focus {
             outline: none;
             background-color: var(--code-bg-light) !important; 
@@ -592,7 +592,9 @@
         if(conf.templateType === 'Packaging') foot = COMMON_TEXT.packagingFooter;
         if(conf.templateType === 'Marketplace') foot = COMMON_TEXT.marketPlaceFooter;
 
-        wel.resultText.value = `${getGreetingTime()}🩷 На связи Команда заботы от школы Логомашина учит 💛\n\n${body}\n\n${foot}`;
+        // FIXED GREETING CALL
+        wel.resultText.value = `${COMMON_TEXT.greeting(getGreetingTime())}\n\n${body}\n\n${foot}`;
+        
         wel.resultBox.classList.add('is-visible');
         wel.copyBtn.style.display = 'flex';
         autoResize(wel.resultText);
