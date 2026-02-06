@@ -76,17 +76,22 @@
 
         /* --- КАЛЬКУЛЯТОР --- */
         .calc-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; /* Добавил gap чтобы поля не слипались */
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-color);
             border-radius: 20px; position: relative;
         }
+        
+        /* Разделитель по центру */
         .calc-grid::before {
             content: ''; position: absolute; top: 30px; bottom: 30px; left: 50%; width: 1px; background: var(--border-color); transform: translateX(-50%); z-index: 1; opacity: 0.5;
         }
+        
+        /* Кружок со стрелкой */
         .calc-grid::after {
             content: '→'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ec4899; font-weight: 800; font-size: 1.2rem; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        
         .calc-card { padding: 35px; border: none; background: transparent; }
         .card-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: var(--text-muted); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; opacity: 0.9; }
         .calc-card.target .card-header { color: #ec4899; opacity: 1; }
@@ -99,9 +104,31 @@
 
         .input-group { margin-bottom: 20px; position: relative; }
         
-        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* УНИФИКАЦИЯ ЗАГОЛОВКОВ ПОЛЕЙ */
+        .label-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; /* Единый отступ */
+            min-height: 22px; /* Фиксированная высота шапки поля, чтобы выровнять строки */
+        }
+        
+        label {
+            display: block; margin-bottom: 0; /* Убираем margin у label, т.к. он теперь внутри label-row */
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
 
-        input, select, textarea { width: 100%; background-color: var(--input-bg); border: 1px solid transparent; color: var(--text-main); padding: 16px 18px; border-radius: 12px; font-size: 0.95rem; box-sizing: border-box; font-family: inherit; transition: all 0.2s; }
+        /* ЕДИНЫЙ СТИЛЬ ДЛЯ INPUT И SELECT */
+        input, select, textarea { 
+            width: 100%; background-color: var(--input-bg); 
+            border: 1px solid transparent; color: var(--text-main); 
+            padding: 0 18px; /* Padding только по бокам */
+            height: 50px; /* Фиксированная высота для идеального выравнивания */
+            line-height: 50px;
+            border-radius: 12px; font-size: 0.95rem; 
+            box-sizing: border-box; font-family: inherit; transition: all 0.2s; 
+        }
+        
+        textarea { height: auto; line-height: 1.6; padding: 20px; }
+
         input:focus, select:focus, textarea:focus { outline: none; background-color: #1e293b; border-color: #ec4899; box-shadow: 0 0 0 3px var(--brand-glow); }
 
         /* Убираем спиннеры */
@@ -119,65 +146,29 @@
             background: #1e293b; border: 1px solid var(--border-color);
             border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             z-index: 100; margin-top: 8px;
-            height: 320px; /* Фиксированная высота */
+            height: 320px; 
             display: none; 
-            flex-direction: row; /* Две колонки */
+            flex-direction: row; 
             overflow: hidden;
         }
         
         .custom-popup.open { display: flex; animation: popupEnter 0.2s ease forwards; }
         @keyframes popupEnter { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Левая колонка (Курсы) */
-        .popup-pane-left {
-            width: 50%;
-            overflow-y: auto;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            background: #1e293b;
-        }
-
-        /* Правая колонка (Тарифы) */
-        .popup-pane-right {
-            width: 50%;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.2); /* Чуть темнее */
-        }
+        .popup-pane-left { width: 50%; overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.05); background: #1e293b; }
+        .popup-pane-right { width: 50%; overflow-y: auto; background: rgba(0,0,0,0.2); }
 
         .popup-item {
-            padding: 12px 15px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            transition: all 0.1s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 12px 15px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); transition: all 0.1s;
+            display: flex; justify-content: space-between; align-items: center; line-height: 1.4;
         }
         
-        .popup-item:hover, .popup-item.active {
-            background: rgba(236, 72, 153, 0.1);
-            color: #ec4899;
-        }
-
-        /* Стрелочка на курсе, чтобы показать, что есть вложенность */
+        .popup-item:hover, .popup-item.active { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
         .item-arrow { font-size: 0.7rem; opacity: 0.5; }
 
-        .tariff-item {
-            padding: 12px 15px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            color: #cbd5e1;
-        }
+        .tariff-item { padding: 12px 15px; font-size: 0.8rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.02); color: #cbd5e1; }
         .tariff-item:hover { background: #ec4899; color: white; }
-        
-        .tariff-placeholder {
-            padding: 20px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-style: italic;
-        }
+        .tariff-placeholder { padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.8rem; font-style: italic; }
 
         /* --- SCROLLBAR --- */
         ::-webkit-scrollbar { width: 6px; }
@@ -213,9 +204,7 @@
         .result-box.calc-visible { display: block; opacity: 1; transform: none; margin-top: 20px; padding-top: 20px; border: none; }
         @keyframes resultEntry { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: var(--text-main); font-size: 0.95rem; font-weight: 700; }
-        textarea { font-family: 'Consolas', 'Monaco', monospace; background-color: var(--code-bg-light); color: #e2e8f0; border: 1px solid var(--border-color); line-height: 1.6; resize: vertical; min-height: 80px; width: 100%; padding: 20px; border-radius: 12px; box-sizing: border-box; font-size: 0.9rem; overflow-y: hidden; }
-        .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .label-row label { margin-bottom: 0; }
+        
         .sales-book-link { font-size: 0.7rem; color: #ec4899; text-decoration: none; border: 1px solid #ec4899; padding: 3px 10px; border-radius: 8px; font-weight: 700; text-transform: uppercase; transition: all 0.2s; background: rgba(236, 72, 153, 0.05); }
         .sales-book-link:hover { background: #ec4899; color: white; }
     </style>
@@ -235,7 +224,7 @@
     <div id="section-welcome" class="section-content active">
         <form id="welcome-form" class="grid-layout" style="display:grid; gap:20px;">
             <div class="input-group">
-                <label>Выберите курс</label>
+                <div class="label-row"><label>Выберите курс</label></div>
                 <select id="course-select" required>
                     <option value="" disabled selected>Не выбрано</option>
                     <option value="Digital-дизайнер новой эры 3.0">Digital-дизайнер новой эры 3.0</option>
@@ -251,11 +240,11 @@
                 </select>
             </div>
             <div class="input-group fade-in" id="tariff-container" style="display:none;">
-                <label>Тариф обучения</label>
+                <div class="label-row"><label>Тариф обучения</label></div>
                 <select id="tariff-select"></select>
             </div>
             <div class="input-group">
-                <label>Дата старта</label>
+                <div class="label-row"><label>Дата старта</label></div>
                 <input type="date" id="start-date" required>
             </div>
             <div class="actions">
@@ -286,28 +275,30 @@
                     </div>
 
                     <div class="input-group" style="position:relative;">
-                        <label>Длительность (мес)</label>
-                        <input type="number" id="calc-duration-months" value="12" required placeholder="Нажмите для выбора курса...">
+                        <div class="label-row">
+                            <label>Длительность (мес)</label>
+                        </div>
+                        <input type="number" id="calc-duration-months" value="12" required placeholder="Нажмите для выбора курса..." autocomplete="off">
                         
                         <div id="calc-popup" class="custom-popup">
                             <div class="popup-pane-left" id="popup-courses">
                                 </div>
                             <div class="popup-pane-right" id="popup-tariffs">
-                                <div class="tariff-placeholder">Выберите курс слева...</div>
+                                <div class="tariff-placeholder">Наведите на курс слева...</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Оплачено (руб)</label>
+                        <div class="label-row"><label>Оплачено (руб)</label></div>
                         <input type="number" id="calc-paid" placeholder="0" required>
                     </div>
                     <div class="input-group">
-                        <label>Дата старта</label>
+                        <div class="label-row"><label>Дата старта</label></div>
                         <input type="date" id="calc-start-date" required>
                     </div>
                     <div class="input-group">
-                        <label>Дата обращения</label>
+                        <div class="label-row"><label>Дата обращения</label></div>
                         <input type="date" id="calc-request-date" required>
                     </div>
                 </div>
@@ -315,7 +306,7 @@
                 <div class="calc-card target">
                     <div class="card-header">Перевод на</div>
                     <div class="input-group">
-                        <label>Новый курс</label>
+                        <div class="label-row"><label>Новый курс</label></div>
                         <select id="calc-new-course-name" required>
                             <option value="" disabled selected>Выберите...</option>
                             <option value="manual">✍️ Ввести вручную</option>
@@ -333,7 +324,7 @@
                         <input type="text" id="calc-new-course-manual" class="fade-in" style="display:none; margin-top:10px;" placeholder="Название курса">
                     </div>
                     <div class="input-group fade-in" id="calc-new-tariff-container" style="display:none;">
-                        <label>Тариф нового курса</label>
+                        <div class="label-row"><label>Тариф нового курса</label></div>
                         <select id="calc-new-tariff"></select>
                     </div>
                     <div class="input-group">
@@ -344,7 +335,7 @@
                         <input type="number" id="calc-new-cost" placeholder="0" required>
                     </div>
                     <div class="input-group">
-                        <label>Скидка (%)</label>
+                        <div class="label-row"><label>Скидка (%)</label></div>
                         <input type="number" id="calc-discount" min="0" max="100" value="20">
                     </div>
                 </div>
@@ -427,9 +418,15 @@
             
             // Если есть тарифы - добавляем стрелочку
             const hasTariffs = !!COURSE_CONFIG[courseKey].tariffs;
-            div.innerHTML = `${courseKey} ${hasTariffs ? '<span class="item-arrow">▶</span>' : ''}`;
+            div.innerHTML = `<span>${courseKey}</span>${hasTariffs ? '<span class="item-arrow">▶</span>' : ''}`;
             
-            div.onmouseenter = () => showTariffsForCourse(courseKey);
+            div.onmouseenter = () => {
+                // Remove active class from others
+                Array.from(popupCourses.children).forEach(c => c.classList.remove('active'));
+                div.classList.add('active');
+                showTariffsForCourse(courseKey);
+            };
+            
             // Если тарифов нет - можно выбрать сразу по клику
             if(!hasTariffs) {
                 div.onclick = () => applySelection(courseKey, null, COURSE_CONFIG[courseKey].months);
@@ -442,12 +439,6 @@
     }
 
     function showTariffsForCourse(courseKey) {
-        // Подсветка активного
-        const items = popupCourses.querySelectorAll('.popup-item');
-        items.forEach(i => i.classList.remove('active'));
-        // Найти текущий элемент (через event target сложно, проще так)
-        // ... (пропускаем для простоты, hover css работает)
-
         const config = COURSE_CONFIG[courseKey];
         popupTariffs.innerHTML = '';
 
@@ -467,7 +458,7 @@
             // Если тарифов нет, показываем кнопку выбора
             const div = document.createElement('div');
             div.className = 'tariff-item';
-            div.textContent = `Стандарт (${config.months} мес)`;
+            div.textContent = `Выбрать (${config.months} мес)`;
             div.onclick = (e) => {
                 e.stopPropagation();
                 applySelection(courseKey, null, config.months);
